@@ -21,7 +21,14 @@ const config: Config = {
 
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["cupcake", "dracula"],
+    themes: [
+      {
+        cupcake: {
+          neutral: "black",
+        },
+      },
+      "dracula",
+    ],
   },
 };
 export default config;
