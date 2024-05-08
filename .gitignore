@@ -34,3 +34,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Environment Variables
+.env
+
+directory_structure.txt
