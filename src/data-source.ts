@@ -1,5 +1,6 @@
 // src/data-source.ts //
 
+import "dotenv/config";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./entities/User";
@@ -14,7 +15,7 @@ if (!process.env.DB_HOST || !process.env.DB_PORT || !process.env.DB_USERNAME || 
 export const AppDataSource = new DataSource({
     type: "postgres",
     host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '5432'),
+    port: parseInt(process.env.DB_PORT ?? 5432),
     username: process.env.DB_USERNAME, 
     password: process.env.DB_PASSWORD, 
     database: process.env.DB_NAME, 
@@ -25,10 +26,3 @@ export const AppDataSource = new DataSource({
     subscribers: [],
 });
 
-AppDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err);
-    });
