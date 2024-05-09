@@ -4,7 +4,7 @@ import { AppDataSource } from '../data-source';
 import { User } from '../entities/User';
 
 // Async handler to simplify error handling in middleware
-const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => 
+const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
     (req: Request, res: Response, next: NextFunction) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
@@ -12,32 +12,36 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => P
 export const updatePoints = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { user } = req;
     if (!user) {
-        return next(); 
+        console.log("No user attached to request");
+        return next();
     }
 
     let pointsToAdd = 0;
     switch (req.method) {
         case 'POST':
-            pointsToAdd = 10;  // adding a new medication
+            pointsToAdd = 100;
             break;
         case 'PUT':
-            pointsToAdd = 0;   // updating a medication
+            pointsToAdd = 10;
             break;
         case 'DELETE':
-            pointsToAdd = -10;   // deleting a medication
+            pointsToAdd = 1;
+            console.log("DELETE CASE: Attempting to add 1 point");
             break;
     }
 
     if (pointsToAdd > 0) {
+        console.log(`Attempting to add ${pointsToAdd} points to user ${user.id}`);
         const userRepository = AppDataSource.getRepository(User);
         const userEntity = await userRepository.findOneBy({ id: user.id });
         if (userEntity) {
-            userEntity.points += pointsToAdd;  // Update points
+            userEntity.points += pointsToAdd;
             await userRepository.save(userEntity);
             console.log(`Updated points for user ${user.username}: ${userEntity.points}`);
+        } else {
+            console.log("User not found in database");
         }
     }
 
     next();
 });
-

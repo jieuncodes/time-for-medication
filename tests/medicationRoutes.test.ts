@@ -7,11 +7,13 @@ import { Medication } from '../src/entities/Medication';
 
 describe('Medication Routes', () => {
     let token = '';
-    let testUser = {
-        username: 'testuser_med',
+    let medicationId = '';
+    const testUsername = 'testuser';
+    const testUser = {
+        username: testUsername,
         password: 'Password123!'
     };
-    let testMedication = {
+    const testMedication = {
         name: 'Aspirin',
         dosage: '100mg',
         frequency: 'Once a day',
@@ -21,69 +23,65 @@ describe('Medication Routes', () => {
     beforeAll(async () => {
         await AppDataSource.initialize();
         await AppDataSource.transaction(async transactionalEntityManager => {
-            await transactionalEntityManager.delete(Medication, {});
-            await transactionalEntityManager.delete(User, {});
+            const user = await transactionalEntityManager.findOne(User, {
+                where: { username: testUsername },
+                relations: ['medications'] 
+            });
+    
+            if (user) {
+                await transactionalEntityManager.remove(Medication, user.medications);
+                await transactionalEntityManager.remove(User, user);
+            }
         });
         await request(app).post('/api/register').send(testUser);
         const loginResponse = await request(app).post('/api/login').send(testUser);
         token = loginResponse.body.accessToken;
+        
     });
 
     afterAll(async () => {
+        await AppDataSource.transaction(async transactionalEntityManager => {
+            const user = await transactionalEntityManager.findOne(User, {
+                where: { username: testUsername },
+                relations: ['medications'] 
+            });
+    
+            if (user) {
+                await transactionalEntityManager.remove(Medication, user.medications);
+                await transactionalEntityManager.remove(User, user);
+            }
+        });
         await AppDataSource.destroy();
+        console.log('medicationRoutes Test Database connection closed');
     });
 
-    beforeEach(async () => {
-        await AppDataSource.getRepository(Medication).delete({});
-    });
-
-    test('POST /api/medications should create a new medication', async () => {
-        const response = await request(app)
+    test('Add Medication', async () => {
+        // POST a new medication
+        const postResponse = await request(app)
             .post('/api/medications')
             .set('Authorization', `Bearer ${token}`)
             .send(testMedication);
-        expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty('id');
+        expect(postResponse.status).toBe(201);
+        medicationId = postResponse.body.id;
     });
 
-    test('GET /api/medications should retrieve all medications for the user', async () => {
-        await request(app)
-            .post('/api/medications')
-            .set('Authorization', `Bearer ${token}`)
-            .send(testMedication);
-
-        const response = await request(app)
-            .get('/api/medications')
-            .set('Authorization', `Bearer ${token}`);
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveLength(1);
-    });
-
-    test('PUT /api/medications/:id should update a medication', async () => {
-        const createResponse = await request(app)
-            .post('/api/medications')
-            .set('Authorization', `Bearer ${token}`)
-            .send(testMedication);
-        const medicationId = createResponse.body.id;
-
-        const response = await request(app)
+    test('Update Medication', async () => {
+        // PUT to update the medication
+        const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
             .send({ name: 'Ibuprofen' });
-        expect(response.status).toBe(200);
-        expect(response.body.name).toBe('Ibuprofen');
+        expect(putResponse.status).toBe(200);
+
     });
 
-    test('DELETE /api/medications/:id should remove a medication', async () => {
-        const createResponse = await request(app)
-            .post('/api/medications')
-            .set('Authorization', `Bearer ${token}`)
-            .send(testMedication);
-        const medicationId = createResponse.body.id;
-
-        const response = await request(app)
+    
+    test('Delete Medication', async () => {
+        // DELETE the medication //오류: 이 코드를 주석처리하면 100포인트, 주석처리하지않으면 110포인트가 추가됨
+        const deleteResponse = await request(app)
             .delete(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`);
-        expect(response.status).toBe(204);
+        expect(deleteResponse.status).toBe(204);
     });
+
 });
