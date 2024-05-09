@@ -1,11 +1,12 @@
 // src/routes/authRoutes.ts
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source'; 
 import { User } from '../entities/User';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { updatePoints } from '../middleware/pointsMiddleware';
 
 const router = Router();
 
@@ -18,14 +19,18 @@ const signToken = (userId: number): string => {
     return jwt.sign({ userId }, secret, { expiresIn: '1h' });
 };
 
-// User Registration Endpoint
+const sendErrorResponse = (res: Response, status: number, message: string) => {
+    res.status(status).json({ success: false, message });
+};
+
+// POST: Register a user
 router.post('/register',
     body('username').isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
     body('password').isStrongPassword().withMessage('Password must meet the strength requirements'),
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return sendErrorResponse(res, 400, 'Validation failed');
         }
 
         const { username, password } = req.body;
@@ -35,21 +40,27 @@ router.post('/register',
             user.username = username;
             user.password = password;
             await userRepository.save(user);
-            res.status(201).json({ message: 'User registered' });
+
+            req.user = user;
+            req.activityType = 'REGISTER';
+            next(); 
         } catch (error) {
-            console.error("Registration error:", (error as Error).message);
-            res.status(500).json({ message: "Error registering user: " + (error as Error).message });
+            console.error("Registration error:", error);
+            sendErrorResponse(res, 500, "Error registering user");
+            return; 
         }
+    }, updatePoints, (req, res) => {
+        res.status(201).json({ success: true, message: 'User registered' });
     });
 
-// User Login Endpoint
+// POST: Login a user
 router.post('/login',
     body('username').notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required'),
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return sendErrorResponse(res, 400, 'Validation failed');
         }
 
         const { username, password } = req.body;
@@ -57,18 +68,23 @@ router.post('/login',
             const userRepository = AppDataSource.getRepository(User);
             const user = await userRepository.findOneBy({ username });
             if (!user) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                return sendErrorResponse(res, 401, 'Invalid credentials');
             }
             const passwordIsValid = await bcrypt.compare(password, user.password);
             if (!passwordIsValid) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                return sendErrorResponse(res, 401, 'Invalid credentials');
             }
-            const token = signToken(user.id);
-            res.json({ accessToken: token });
-        } catch (error) {
-            console.error("Login error:", (error as Error).message);
-            res.status(500).json({ message: "Error during login: " + (error as Error).message });
-        }
-    });
 
+            req.user = user;
+            req.body.token = signToken(user.id);
+            req.activityType = 'LOGIN';
+            next();  // This calls the updatePoints middleware
+        } catch (error) {
+            console.error("Login error:", error);
+            sendErrorResponse(res, 500, "Error during login");
+            return;
+        }
+    }, updatePoints, (req, res) => {
+        res.json({ success: true, accessToken: req.body.token });
+    });
 export default router;

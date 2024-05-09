@@ -36,8 +36,14 @@ describe('Authentication Routes', () => {
                 await transactionalEntityManager.remove(User, user);
             }
         });
-        await AppDataSource.destroy(); // Close the database connection
-        console.log('authRoutes Test Database connection closed');
+        if (AppDataSource.isInitialized) {
+            try {
+                await AppDataSource.destroy();
+                console.log('Data Source has been destroyed successfully!');
+            } catch (error) {
+                console.error("Error during Data Source destruction:", error);
+            }
+        }
     });
 
     beforeEach(async () => {

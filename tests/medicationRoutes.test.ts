@@ -25,9 +25,9 @@ describe('Medication Routes', () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: testUsername },
-                relations: ['medications'] 
+                relations: ['medications']
             });
-    
+
             if (user) {
                 await transactionalEntityManager.remove(Medication, user.medications);
                 await transactionalEntityManager.remove(User, user);
@@ -36,17 +36,17 @@ describe('Medication Routes', () => {
         await request(app).post('/api/register').send(testUser);
         const loginResponse = await request(app).post('/api/login').send(testUser);
         token = loginResponse.body.accessToken;
-        
+
     });
 
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: testUsername },
-                relations: ['medications'] 
+                relations: ['medications']
             });
-    
-            if (user) {
+
+            if (user) { //comment out to watch db changes
                 await transactionalEntityManager.remove(Medication, user.medications);
                 await transactionalEntityManager.remove(User, user);
             }
@@ -65,19 +65,26 @@ describe('Medication Routes', () => {
         medicationId = postResponse.body.id;
     });
 
-    test('Update Medication', async () => {
+    test('Update Medication1', async () => {
         // PUT to update the medication
         const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
             .send({ name: 'Ibuprofen' });
         expect(putResponse.status).toBe(200);
-
     });
 
-    
+    test('Update Medication2', async () => {
+        // PUT to update the medication
+        const putResponse = await request(app)
+            .put(`/api/medications/${medicationId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ name: 'lafa', dosage: '50mg' });
+        expect(putResponse.status).toBe(200);
+    });
+
     test('Delete Medication', async () => {
-        // DELETE the medication //오류: 이 코드를 주석처리하면 100포인트, 주석처리하지않으면 110포인트가 추가됨
+        // DELETE the medication
         const deleteResponse = await request(app)
             .delete(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`);

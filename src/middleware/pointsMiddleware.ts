@@ -3,34 +3,33 @@ import { Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source';
 import { User } from '../entities/User';
 
-// Async handler to simplify error handling in middleware
+const POINTS_CONFIG = {
+    REGISTER: parseInt(process.env.POINTS_REGISTER ?? '0'),
+    LOGIN: parseInt(process.env.POINTS_LOGIN ?? '0'),
+    CREATE_MEDICATION: parseInt(process.env.POINTS_CREATE_MEDICATION ?? '0'),
+    UPDATE_MEDICATION: parseInt(process.env.POINTS_UPDATE_MEDICATION ?? '0'),
+    DELETE_MEDICATION: parseInt(process.env.POINTS_DELETE_MEDICATION ?? '0')
+};
+
+
+
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
     (req: Request, res: Response, next: NextFunction) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
 export const updatePoints = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const { user } = req;
-    if (!user) {
-        console.log("No user attached to request");
+    const { user, activityType } = req;
+
+    if (!user || !activityType) {
+        console.log("Required user or activityType information is missing.");
+        console.log(`${user}, ${String(activityType)}`)
         return next();
     }
 
-    let pointsToAdd = 0;
-    switch (req.method) {
-        case 'POST':
-            pointsToAdd = 100;
-            break;
-        case 'PUT':
-            pointsToAdd = 10;
-            break;
-        case 'DELETE':
-            pointsToAdd = 1;
-            console.log("DELETE CASE: Attempting to add 1 point");
-            break;
-    }
+    const pointsToAdd = POINTS_CONFIG[activityType as keyof typeof POINTS_CONFIG] ?? 0;
 
-    if (pointsToAdd > 0) {
+    if (pointsToAdd != 0) {
         console.log(`Attempting to add ${pointsToAdd} points to user ${user.id}`);
         const userRepository = AppDataSource.getRepository(User);
         const userEntity = await userRepository.findOneBy({ id: user.id });
