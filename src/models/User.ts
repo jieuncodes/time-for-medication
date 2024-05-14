@@ -18,6 +18,12 @@ export class User implements IUser {
   @Column({ default: 0 })
   points: number;
 
+  @Column({ nullable: true })
+  fcmToken?: string;
+
+  @Column('json', { nullable: true })
+  subscription?: any;
+
   @OneToMany(() => Medication, medication => medication.user, { cascade: ['insert', 'update', 'remove'] })
   medications: Medication[];
 

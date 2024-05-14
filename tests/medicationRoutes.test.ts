@@ -11,7 +11,8 @@ describe('Medication Routes', () => {
     const testUsername = 'testuser';
     const testUser = {
         username: testUsername,
-        password: 'Password123!'
+        password: 'Password123!',
+        fcmToken: 'fakeFcmToken123'
     };
     const testMedication = {
         name: 'Aspirin',
@@ -46,7 +47,7 @@ describe('Medication Routes', () => {
                 relations: ['medications']
             });
 
-            if (user) { //comment out to watch db changes
+            if (user) {
                 await transactionalEntityManager.remove(Medication, user.medications);
                 await transactionalEntityManager.remove(User, user);
             }
@@ -56,7 +57,6 @@ describe('Medication Routes', () => {
     });
 
     test('Add Medication', async () => {
-        // POST a new medication
         const postResponse = await request(app)
             .post('/api/medications')
             .set('Authorization', `Bearer ${token}`)
@@ -66,7 +66,6 @@ describe('Medication Routes', () => {
     });
 
     test('Update Medication1', async () => {
-        // PUT to update the medication
         const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
@@ -75,7 +74,6 @@ describe('Medication Routes', () => {
     });
 
     test('Update Medication2', async () => {
-        // PUT to update the medication
         const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
@@ -84,7 +82,6 @@ describe('Medication Routes', () => {
     });
 
     test('Delete Medication', async () => {
-        // DELETE the medication
         const deleteResponse = await request(app)
             .delete(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`);

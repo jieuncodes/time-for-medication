@@ -1,11 +1,11 @@
 // src/types/express/index.d.ts
-
 import { Request } from 'express';
-import { User } from '../../models/User';
+import { IUser } from '../../interfaces/IUser';
+import { POINTS_CONFIG } from '../../middlewares/pointsMiddleware';
 
-declare module 'express' {
-    export interface Request {
-        user?: Partial<User> & { id: number; userId?: number };
-        activityType?: keyof typeof POINTS_CONFIG;
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: Partial<IUser> & { id: number };
+    activityType?: keyof typeof POINTS_CONFIG;
+  }
 }

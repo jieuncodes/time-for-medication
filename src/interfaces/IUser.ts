@@ -4,6 +4,8 @@ export interface IUser {
     username: string;
     password: string;
     points: number;
+    fcmToken?: string; 
+    subscription?: any;
     hashPassword(): Promise<void>;
     validatePassword(password: string): Promise<boolean>;
   }

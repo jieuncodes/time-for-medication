@@ -13,7 +13,7 @@ describe('User Entity', () => {
     user.password = 'Password123!';
     await user.hashPassword(); //manually hash the password, not to use register api
   });
-  
+
 
   test('should hash the password before saving', async () => {
     expect(user.password).not.toBe('Password123!');

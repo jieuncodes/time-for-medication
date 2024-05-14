@@ -1,5 +1,4 @@
 // tests/authRoutes.test.ts
-
 import request from 'supertest';
 import app from '../src/app';
 import { AppDataSource } from '../src/data-source';
@@ -9,7 +8,6 @@ import { Medication } from '../src/models/Medication';
 describe('Authentication Routes', () => {
     beforeAll(async () => {
         await AppDataSource.initialize();
-        // delete 'testuser'
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: 'testuser' },
@@ -24,7 +22,6 @@ describe('Authentication Routes', () => {
     });
 
     afterAll(async () => {
-        // delete 'testuser'
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: 'testuser' },
@@ -46,20 +43,14 @@ describe('Authentication Routes', () => {
         }
     });
 
-    beforeEach(async () => {
-
-    });
-
-    afterEach(async () => {
-    });
-
     describe('POST /api/register', () => {
         test('should register a new user and return 201 status', async () => {
             const response = await request(app)
                 .post('/api/register')
                 .send({
                     username: 'testuser',
-                    password: 'Password123!'
+                    password: 'Password123!',
+                    fcmToken: 'fakeFcmToken123'
                 });
 
             expect(response.status).toBe(201);
@@ -69,12 +60,12 @@ describe('Authentication Routes', () => {
 
     describe('POST /api/login', () => {
         test('should authenticate user with correct credentials', async () => {
-
             const response = await request(app)
                 .post('/api/login')
                 .send({
                     username: 'testuser',
-                    password: 'Password123!'
+                    password: 'Password123!',
+                    fcmToken: 'fakeFcmToken123'
                 });
 
             expect(response.status).toBe(200);

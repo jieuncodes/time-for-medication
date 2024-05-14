@@ -1,7 +1,6 @@
-// src/routes/authRoutes.ts
-
+// src/controllers/authRoutes.ts
 import { Router, Request, Response, NextFunction } from 'express';
-import { AppDataSource } from '../data-source'; 
+import { AppDataSource } from '../data-source';
 import { User } from '../models/User';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
@@ -27,27 +26,29 @@ const sendErrorResponse = (res: Response, status: number, message: string) => {
 router.post('/register',
     body('username').isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
     body('password').isStrongPassword().withMessage('Password must meet the strength requirements'),
+    body('fcmToken').optional().isString(),
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { username, password } = req.body;
+        const { username, password, fcmToken } = req.body;
         try {
             const userRepository = AppDataSource.getRepository(User);
             let user = new User();
             user.username = username;
             user.password = password;
+            user.fcmToken = fcmToken;
             await userRepository.save(user);
 
             req.user = user;
             req.activityType = 'REGISTER';
-            next(); 
+            next();
         } catch (error) {
             console.error("Registration error:", error);
             sendErrorResponse(res, 500, "Error registering user");
-            return; 
+            return;
         }
     }, updatePoints, (req, res) => {
         res.status(201).json({ success: true, message: 'User registered' });
@@ -57,13 +58,14 @@ router.post('/register',
 router.post('/login',
     body('username').notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required'),
+    body('fcmToken').optional().isString(),
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { username, password } = req.body;
+        const { username, password, fcmToken } = req.body;
         try {
             const userRepository = AppDataSource.getRepository(User);
             const user = await userRepository.findOneBy({ username });
@@ -75,16 +77,22 @@ router.post('/login',
                 return sendErrorResponse(res, 401, 'Invalid credentials');
             }
 
+            if (fcmToken) {
+                user.fcmToken = fcmToken;
+                await userRepository.save(user);
+            }
+
             req.user = user;
             req.body.token = signToken(user.id);
             req.activityType = 'LOGIN';
-            next(); 
+            next();
         } catch (error) {
             console.error("Login error:", error);
             sendErrorResponse(res, 500, "Error during login");
             return;
         }
     }, updatePoints, (req, res) => {
-        res.json({ success: true, accessToken: req.body.token });
+        res.json({ success: true, accessToken: req.body.token, userId: req.user!.id });
     });
+
 export default router;
