@@ -1,6 +1,6 @@
 //tests/user.test.ts 
 
-import { User } from '../src/entities/User';
+import { User } from '../src/models/User';
 import bcrypt from 'bcrypt';
 
 

@@ -1,7 +1,7 @@
 // src/types/express/index.d.ts
 
 import { Request } from 'express';
-import { User } from '../../entities/User';
+import { User } from '../../models/User';
 
 declare module 'express' {
     export interface Request {

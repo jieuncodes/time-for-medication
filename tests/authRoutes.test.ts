@@ -3,8 +3,8 @@
 import request from 'supertest';
 import app from '../src/app';
 import { AppDataSource } from '../src/data-source';
-import { User } from '../src/entities/User';
-import { Medication } from '../src/entities/Medication';
+import { User } from '../src/models/User';
+import { Medication } from '../src/models/Medication';
 
 describe('Authentication Routes', () => {
     beforeAll(async () => {

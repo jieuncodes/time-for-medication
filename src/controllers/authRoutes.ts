@@ -2,11 +2,11 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source'; 
-import { User } from '../entities/User';
+import { User } from '../models/User';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { updatePoints } from '../middleware/pointsMiddleware';
+import { updatePoints } from '../middlewares/pointsMiddleware';
 
 const router = Router();
 
@@ -78,7 +78,7 @@ router.post('/login',
             req.user = user;
             req.body.token = signToken(user.id);
             req.activityType = 'LOGIN';
-            next();  // This calls the updatePoints middleware
+            next(); 
         } catch (error) {
             console.error("Login error:", error);
             sendErrorResponse(res, 500, "Error during login");

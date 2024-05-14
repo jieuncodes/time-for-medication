@@ -1,7 +1,7 @@
 // src/middleware/pointsMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
+import { User } from '../models/User';
 
 const POINTS_CONFIG = {
     REGISTER: parseInt(process.env.POINTS_REGISTER ?? '0'),

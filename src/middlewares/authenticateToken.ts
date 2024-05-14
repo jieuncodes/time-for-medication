@@ -3,7 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
+import { User } from '../models/User';
 
 export function authenticateToken(req: Request, res: Response, next: NextFunction) {
     const token = req.headers['authorization']?.split(' ')[1];

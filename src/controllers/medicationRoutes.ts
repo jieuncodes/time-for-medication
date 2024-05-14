@@ -1,10 +1,10 @@
 // src/routes/medicationRoutes.ts
 import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { AppDataSource } from '../data-source';
-import { Medication } from '../entities/Medication';
-import { User } from '../entities/User';
-import { authenticateToken } from '../middleware/authenticateToken';
-import { updatePoints } from '../middleware/pointsMiddleware';
+import { Medication } from '../models/Medication';
+import { User } from '../models/User';
+import { authenticateToken } from '../middlewares/authenticateToken';
+import { updatePoints } from '../middlewares/pointsMiddleware';
 
 const router = Router();
 
