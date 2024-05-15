@@ -7,6 +7,9 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    colors: {
+      "cupcake-white": "#FAF7F5",
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -15,6 +18,17 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        cupcake: {
+          neutral: "black",
+        },
+      },
+      "dracula",
+    ],
+  },
 };
 export default config;
