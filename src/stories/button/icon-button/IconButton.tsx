@@ -17,7 +17,7 @@ export const IconButton: FC<IconButtonProps> = ({
   }[size];
 
   return (
-    <Link href={url} className={`inline-block ${sizeClass}`}>
+    <Link href={url} className={`flex align-middle ${sizeClass}`}>
       <IconComponent />
     </Link>
   );
