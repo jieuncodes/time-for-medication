@@ -8,19 +8,9 @@ type User = {
   name: string;
 };
 
-interface HeaderProps {
-  user?: User;
-  onLogin?: () => void;
-  onLogout?: () => void;
-  onCreateAccount?: () => void;
-}
+interface HeaderProps {}
 
-export const Header = ({
-  user,
-  onLogin,
-  onLogout,
-  onCreateAccount,
-}: HeaderProps) => (
+export const Header = ({}: HeaderProps) => (
   <header>
     <div className="tfm-header">
       <div>
