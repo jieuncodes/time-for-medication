@@ -38,7 +38,8 @@ next-env.d.ts
 
 
 
-# Firebase service account key
-src/config/firebaseServiceAccountKey.json
 
+#임시용
 directory_structure.txt
+merge_files.py
+merged_code.txt
