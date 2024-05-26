@@ -1,16 +1,16 @@
 import React from "react";
 
 import "./header.css";
-import { IconButton } from "../button/icon-button/IconButton";
-import Person from "../../../components/atoms/icons/Person";
+import { IconButton } from "../../atoms/button/icon-button/IconButton";
+import Person from "components/atoms/icons/Person";
 
 type User = {
   name: string;
 };
 
-interface HeaderProps { }
+interface HeaderProps {}
 
-export const Header = ({ }: HeaderProps) => (
+export const Header = ({}: HeaderProps) => (
   <header>
     <div className="tfm-header">
       <div>
