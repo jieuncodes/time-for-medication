@@ -37,9 +37,9 @@ yarn-error.log*
 next-env.d.ts
 
 
-
-
 #임시용
 directory_structure.txt
 merge_files.py
 merged_code.txt
+
+*storybook.log
