@@ -36,7 +36,7 @@ describe('Medication Routes', () => {
         });
         await request(app).post('/api/register').send(testUser);
         const loginResponse = await request(app).post('/api/login').send(testUser);
-        token = loginResponse.body.accessToken;
+        token = loginResponse.body.data.accessToken;
 
     });
 
@@ -61,15 +61,15 @@ describe('Medication Routes', () => {
             .post('/api/medications')
             .set('Authorization', `Bearer ${token}`)
             .send(testMedication);
-        expect(postResponse.status).toBe(201);
-        medicationId = postResponse.body.id;
+        expect(postResponse.status).toBe(200);
+        medicationId = postResponse.body.data.id;
     });
 
     test('Update Medication1', async () => {
         const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ name: 'Ibuprofen' });
+            .send({ name: 'Ibuprofen', dosage: '100mg', frequency: 'Once a day', nextAlarm: new Date().toISOString() });
         expect(putResponse.status).toBe(200);
     });
 
@@ -77,7 +77,7 @@ describe('Medication Routes', () => {
         const putResponse = await request(app)
             .put(`/api/medications/${medicationId}`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ name: 'lafa', dosage: '50mg' });
+            .send({ name: 'lafa', dosage: '50mg', frequency: 'Twice a day', nextAlarm: new Date().toISOString() });
         expect(putResponse.status).toBe(200);
     });
 

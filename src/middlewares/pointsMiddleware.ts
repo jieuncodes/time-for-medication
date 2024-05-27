@@ -22,23 +22,17 @@ export const updatePoints = asyncHandler(async (req: Request, res: Response, nex
     const { user, activityType } = req;
 
     if (!user || !activityType) {
-        console.log("Required user or activityType information is missing.");
-        console.log(`${user}, ${String(activityType)}`)
         return next();
     }
 
     const pointsToAdd = POINTS_CONFIG[activityType as keyof typeof POINTS_CONFIG] ?? 0;
 
-    if (pointsToAdd != 0) {
-        console.log(`Attempting to add ${pointsToAdd} points to user ${user.id}`);
+    if (pointsToAdd !== 0) {
         const userRepository = AppDataSource.getRepository(User);
         const userEntity = await userRepository.findOneBy({ id: user.id });
         if (userEntity) {
             userEntity.points += pointsToAdd;
             await userRepository.save(userEntity);
-            console.log(`Updated points for user ${user.username}: ${userEntity.points}`);
-        } else {
-            console.log("User not found in database");
         }
     }
 

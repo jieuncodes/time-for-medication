@@ -1,5 +1,5 @@
 // src/app.ts 
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -8,6 +8,8 @@ import { AppDataSource } from './data-source';
 import authRoutes from './controllers/authRoutes';
 import medicationRoutes from './controllers/medicationRoutes';
 import config from './config';
+import { errorHandler } from './middlewares/errorHandler';
+
 
 const app = express();
 
@@ -34,19 +36,23 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api/medications', medicationRoutes);
 
-// Enforce HTTPS in non-development environments
-app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https' && process.env.NODE_ENV !== 'development') {
-        return res.redirect(301, `https://${req.hostname}${req.url}`);
-    }
-    next();
+// Simulate an error route for testing
+app.get('/api/error', (req, res) => {
+    throw new Error('Test error');
 });
 
+// Enforce HTTPS in non-development environments
+if (!['development', 'test'].includes(process.env.NODE_ENV!)) {
+    app.use((req, res, next) => {
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect(301, `https://${req.hostname}${req.url}`);
+        }
+        next();
+    });
+}
+
 // Global Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
+app.use(errorHandler);
 
 if (process.env.NODE_ENV !== 'test') {
     AppDataSource.initialize()
