@@ -1,20 +1,35 @@
 // src/app.ts 
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { AppDataSource } from './data-source';
 import authRoutes from './controllers/authRoutes';
 import medicationRoutes from './controllers/medicationRoutes';
+import config from './config';
 
 const app = express();
 
-// Apply helmet to set security-related HTTP headers
+// Security Middleware
+
 app.use(helmet());
+app.use(cors({
+    origin: config.allowedOrigins,
+    optionsSuccessStatus: 200
+}));
 
-// Parse Cookie header and populate req.cookies
+// Rate Limiting Middleware
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15m
+    max: 100 // limit each ip 100 request per windowMS
+});
+app.use(limiter);
+
+
 app.use(cookieParser());
-
 app.use(express.json());
+
 app.use('/api', authRoutes);
 app.use('/api/medications', medicationRoutes);
 
@@ -26,11 +41,17 @@ app.use((req, res, next) => {
     next();
 });
 
-if (process.env.NODE_ENV != 'test') {
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
+if (process.env.NODE_ENV !== 'test') {
     AppDataSource.initialize()
         .then(() => {
             console.log("Data Source has been initialized successfully!");
-            const PORT = process.env.PORT ?? 5432;
+            const PORT = config.port ?? 3000;
             app.listen(PORT, () => {
                 console.log(`Server running on port ${PORT}`);
             });
