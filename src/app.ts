@@ -36,13 +36,20 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api/medications', medicationRoutes);
 
-// Enforce HTTPS in non-development environments
-app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https' && process.env.NODE_ENV !== 'development') {
-        return res.redirect(301, `https://${req.hostname}${req.url}`);
-    }
-    next();
+// Simulate an error route for testing
+app.get('/api/error', (req, res) => {
+    throw new Error('Test error');
 });
+
+// Enforce HTTPS in non-development environments
+if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+    app.use((req, res, next) => {
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect(301, `https://${req.hostname}${req.url}`);
+        }
+        next();
+    });
+}
 
 // Global Error Handler
 app.use(errorHandler);
