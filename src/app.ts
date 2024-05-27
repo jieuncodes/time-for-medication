@@ -22,7 +22,8 @@ app.use(cors({
 // Rate Limiting Middleware
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15m
-    max: 100 // limit each ip 100 request per windowMS
+    max: 100, // limit each ip 100 request per windowMS
+    message: "Too many requests, please try again later."
 });
 app.use(limiter);
 

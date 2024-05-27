@@ -24,9 +24,17 @@ const sendErrorResponse = (res: Response, status: number, message: string) => {
 
 // POST: Register a user
 router.post('/register',
-    body('username').isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
-    body('password').isStrongPassword().withMessage('Password must meet the strength requirements'),
-    body('fcmToken').optional().isString(),
+    body('username')
+        .isLength({ min: 6, max: 30 })
+        .withMessage('Username must be between 6 and 30 characters long')
+        .matches(/^\w+$/)
+        .withMessage('Username must contain only letters, numbers, and underscores'),
+    body('password')
+        .isStrongPassword()
+        .withMessage('Password must meet the strength requirements')
+        .isLength({ min: 10, max: 30 })
+        .withMessage('Password must be between 10 and 30 characters long'),
+    body('fcmToken').optional().isString().isLength({ max: 200 }),
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -56,9 +64,14 @@ router.post('/register',
 
 // POST: Login a user
 router.post('/login',
-    body('username').notEmpty().withMessage('Username is required'),
-    body('password').notEmpty().withMessage('Password is required'),
-    body('fcmToken').optional().isString(),
+    body('username')
+        .notEmpty()
+        .withMessage('Username is required')
+        .matches(/^\w+$/)
+        .isLength({ max: 30 })
+        .withMessage('Username must contain only letters, numbers, and underscores'),
+    body('password').notEmpty().withMessage('Password is required').isLength({ max: 100 }),
+    body('fcmToken').optional().isString().isLength({ max: 200 }),
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
