@@ -22,7 +22,9 @@ const requiredEnvVariables = [
   'FIREBASE_TOKEN_URI',
   'FIREBASE_AUTH_PROVIDER_X509_CERT_URL',
   'FIREBASE_CLIENT_X509_CERT_URL',
-  'FIREBASE_UNIVERSE_DOMAIN'
+  'FIREBASE_UNIVERSE_DOMAIN',
+  'PORT',
+  'ALLOWED_ORIGINS'
 ];
 
 for (const variable of requiredEnvVariables) {
@@ -53,7 +55,9 @@ const config = {
     auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
     universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
-  }
+  },
+  port: parseInt(process.env.PORT!, 3000),
+  allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || []
 };
 
 export default config;
