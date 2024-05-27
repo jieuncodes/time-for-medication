@@ -55,8 +55,7 @@ router.post('/register',
             next();
         } catch (error) {
             console.error("Registration error:", error);
-            sendErrorResponse(res, 500, "Error registering user");
-            return;
+            next(error);
         }
     }, updatePoints, (req, res) => {
         res.status(201).json({ success: true, message: 'User registered' });
@@ -101,8 +100,7 @@ router.post('/login',
             next();
         } catch (error) {
             console.error("Login error:", error);
-            sendErrorResponse(res, 500, "Error during login");
-            return;
+            next(error);
         }
     }, updatePoints, (req, res) => {
         res.json({ success: true, accessToken: req.body.token, userId: req.user!.id });

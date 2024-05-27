@@ -8,6 +8,8 @@ import { AppDataSource } from './data-source';
 import authRoutes from './controllers/authRoutes';
 import medicationRoutes from './controllers/medicationRoutes';
 import config from './config';
+import { errorHandler } from './middlewares/errorHandler';
+
 
 const app = express();
 
@@ -43,10 +45,7 @@ app.use((req, res, next) => {
 });
 
 // Global Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
+app.use(errorHandler);
 
 if (process.env.NODE_ENV !== 'test') {
     AppDataSource.initialize()
