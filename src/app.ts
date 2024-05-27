@@ -42,7 +42,7 @@ app.get('/api/error', (req, res) => {
 });
 
 // Enforce HTTPS in non-development environments
-if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+if (!['development', 'test'].includes(process.env.NODE_ENV!)) {
     app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] !== 'https') {
             return res.redirect(301, `https://${req.hostname}${req.url}`);
