@@ -2,10 +2,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source';
 import { User } from '../models/User';
-import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { updatePoints } from '../middlewares/pointsMiddleware';
+import { sendErrorResponse, sendSuccessResponse } from '../utils/response';
+import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation';
 
 const router = Router();
 
@@ -18,23 +20,9 @@ const signToken = (userId: number): string => {
     return jwt.sign({ userId }, secret, { expiresIn: '1h' });
 };
 
-const sendErrorResponse = (res: Response, status: number, message: string) => {
-    res.status(status).json({ success: false, message });
-};
-
 // POST: Register a user
 router.post('/register',
-    body('username')
-        .isLength({ min: 6, max: 30 })
-        .withMessage('Username must be between 6 and 30 characters long')
-        .matches(/^\w+$/)
-        .withMessage('Username must contain only letters, numbers, and underscores'),
-    body('password')
-        .isStrongPassword()
-        .withMessage('Password must meet the strength requirements')
-        .isLength({ min: 10, max: 30 })
-        .withMessage('Password must be between 10 and 30 characters long'),
-    body('fcmToken').optional().isString().isLength({ max: 200 }),
+    [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -57,20 +45,13 @@ router.post('/register',
             console.error("Registration error:", error);
             next(error);
         }
-    }, updatePoints, (req, res) => {
-        res.status(201).json({ success: true, message: 'User registered' });
+    }, updatePoints, (req: Request, res: Response) => {
+        sendSuccessResponse(res, 'User registered');
     });
 
 // POST: Login a user
 router.post('/login',
-    body('username')
-        .notEmpty()
-        .withMessage('Username is required')
-        .matches(/^\w+$/)
-        .isLength({ max: 30 })
-        .withMessage('Username must contain only letters, numbers, and underscores'),
-    body('password').notEmpty().withMessage('Password is required').isLength({ max: 100 }),
-    body('fcmToken').optional().isString().isLength({ max: 200 }),
+    [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
     async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -102,8 +83,7 @@ router.post('/login',
             console.error("Login error:", error);
             next(error);
         }
-    }, updatePoints, (req, res) => {
-        res.json({ success: true, accessToken: req.body.token, userId: req.user!.id });
+    }, updatePoints, (req: Request, res: Response) => {
+        sendSuccessResponse(res, { accessToken: req.body.token, userId: req.user!.id });
     });
-
 export default router;

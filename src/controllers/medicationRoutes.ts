@@ -1,11 +1,14 @@
 // src/routes/medicationRoutes.ts
 import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
-import { body, param, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import { AppDataSource } from '../data-source';
 import { Medication } from '../models/Medication';
 import { User } from '../models/User';
 import { authenticateToken } from '../middlewares/authenticateToken';
 import { updatePoints } from '../middlewares/pointsMiddleware';
+import { sendErrorResponse, sendSuccessResponse } from '../utils/response';
+import { idParamValidation, medicationValidation } from '../utils/validation';
+
 
 const router = Router();
 
@@ -22,17 +25,10 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => P
         }
     };
 
-const sendErrorResponse = (res: Response, status: number, message: string) => {
-    res.status(status).json({ success: false, message });
-};
-
 
 // POST: Add a new medication
 router.post('/',
-    body('name').notEmpty().withMessage('Name is required').isLength({ max: 100 }),
-    body('dosage').notEmpty().withMessage('Dosage is required').isLength({ max: 100 }),
-    body('frequency').notEmpty().withMessage('Frequency is required').isLength({ max: 100 }),
-    body('nextAlarm').isISO8601().withMessage('Next alarm must be a valid ISO8601 date'),
+    medicationValidation,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -52,10 +48,9 @@ router.post('/',
         req.body.medication = medication;
         req.activityType = 'CREATE_MEDICATION';
         next();
-    }), updatePoints, (req, res) => {
-        res.status(201).json(req.body.medication);
+    }), updatePoints, (req: Request, res: Response) => {
+        sendSuccessResponse(res, req.body.medication);
     });
-
 
 // GET: Retrieve all medications for the logged-in user
 router.get('/', asyncHandler(async (req: Request, res: Response) => {
@@ -63,16 +58,13 @@ router.get('/', asyncHandler(async (req: Request, res: Response) => {
     const medications = await medicationRepository.find({
         where: { user: { id: req.user!.id } }
     });
-    res.json(medications);
+    sendSuccessResponse(res, medications);
 }));
 
 // PUT: Update a medication
 router.put('/:id',
-    param('id').isInt().withMessage('Medication ID must be an integer'),
-    body('name').optional().notEmpty().withMessage('Name must not be empty').isLength({ max: 100 }),
-    body('dosage').optional().notEmpty().withMessage('Dosage must not be empty').isLength({ max: 100 }),
-    body('frequency').optional().notEmpty().withMessage('Frequency must not be empty').isLength({ max: 100 }),
-    body('nextAlarm').optional().isISO8601().withMessage('Next alarm must be a valid ISO8601 date'),
+    idParamValidation,
+    medicationValidation,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -104,14 +96,13 @@ router.put('/:id',
         req.body.medication = medication;
         req.activityType = 'UPDATE_MEDICATION';
         next();
-    }), updatePoints, (req, res) => {
-        res.json(req.body.medication);
+    }), updatePoints, (req: Request, res: Response) => {
+        sendSuccessResponse(res, req.body.medication);
     });
-
 
 // DELETE: Remove a medication
 router.delete('/:id',
-    param('id').isInt().withMessage('Medication ID must be an integer'),
+    idParamValidation,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -130,7 +121,7 @@ router.delete('/:id',
         }
         req.activityType = 'DELETE_MEDICATION';
         next();
-    }), updatePoints, (req, res) => {
+    }), updatePoints, (req: Request, res: Response) => {
         res.status(204).send();
     });
 

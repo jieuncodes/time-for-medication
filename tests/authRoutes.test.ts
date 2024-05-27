@@ -11,9 +11,9 @@ describe('Authentication Routes', () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: 'testuser' },
-                relations: ['medications'] 
+                relations: ['medications']
             });
-    
+
             if (user) {
                 await transactionalEntityManager.remove(Medication, user.medications);
                 await transactionalEntityManager.remove(User, user);
@@ -25,9 +25,9 @@ describe('Authentication Routes', () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
                 where: { username: 'testuser' },
-                relations: ['medications'] 
+                relations: ['medications']
             });
-    
+
             if (user) {
                 await transactionalEntityManager.remove(Medication, user.medications);
                 await transactionalEntityManager.remove(User, user);
@@ -44,7 +44,7 @@ describe('Authentication Routes', () => {
     });
 
     describe('POST /api/register', () => {
-        test('should register a new user and return 201 status', async () => {
+        test('should register a new user and return 200 status', async () => {
             const response = await request(app)
                 .post('/api/register')
                 .send({
@@ -53,8 +53,8 @@ describe('Authentication Routes', () => {
                     fcmToken: 'fakeFcmToken123'
                 });
 
-            expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty('message', 'User registered');
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty('data', 'User registered');
         });
     });
 
@@ -69,7 +69,7 @@ describe('Authentication Routes', () => {
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('accessToken');
+            expect(response.body.data).toHaveProperty('accessToken');
         });
 
         test('should reject login with incorrect credentials', async () => {
@@ -77,7 +77,7 @@ describe('Authentication Routes', () => {
                 .post('/api/login')
                 .send({
                     username: 'testuser',
-                    password: 'WrongPassword!'
+                    password: 'WrongPassword1!',
                 });
 
             expect(response.status).toBe(401);
