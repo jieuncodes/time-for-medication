@@ -42,7 +42,7 @@ app.get('/api/error', (req, res) => {
 });
 
 // Enforce HTTPS in non-development environments
-if (!['development', 'test'].includes(process.env.NODE_ENV!)) {
+if (!['development', 'test'].includes(config.nodeEnv)) {
     app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] !== 'https') {
             return res.redirect(301, `https://${req.hostname}${req.url}`);
@@ -54,7 +54,7 @@ if (!['development', 'test'].includes(process.env.NODE_ENV!)) {
 // Global Error Handler
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== 'test') {
+if (config.nodeEnv !== 'test') {
     AppDataSource.initialize()
         .then(() => {
             console.log("Data Source has been initialized successfully!");
