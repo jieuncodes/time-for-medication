@@ -1,14 +1,13 @@
 // src/routes/medicationRoutes.ts
-import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
+import { Router, Response, NextFunction, RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
 import { AppDataSource } from '../data-source';
 import { Medication } from '../models/Medication';
-import { User } from '../models/User';
 import { authenticateToken } from '../middlewares/authenticateToken';
 import { updatePoints } from '../middlewares/pointsMiddleware';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/response';
 import { idParamValidation, medicationValidation } from '../utils/validation';
-
+import { MedicationRequest } from '../types/requests';
 
 const router = Router();
 
@@ -16,20 +15,14 @@ const router = Router();
 router.use(authenticateToken);
 
 // Helper function to handle async operations and errors correctly
-const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>): RequestHandler =>
-    async (req, res, next) => {
-        try {
-            await fn(req, res, next);
-        } catch (error) {
-            next(error);
-        }
+const asyncHandler = (fn: (req: MedicationRequest, res: Response, next: NextFunction) => Promise<void>): RequestHandler =>
+    (req, res, next) => {
+        fn(req as MedicationRequest, res, next).catch(next);
     };
-
-
 // POST: Add a new medication
 router.post('/',
     medicationValidation,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: MedicationRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
@@ -41,19 +34,19 @@ router.post('/',
         medication.dosage = dosage;
         medication.frequency = frequency;
         medication.nextAlarm = new Date(nextAlarm);
-        medication.user = req.user as User;
+        medication.user = req.user as any; // Cast to any to avoid type issues
 
         const medicationRepository = AppDataSource.getRepository(Medication);
         await medicationRepository.save(medication);
         req.body.medication = medication;
         req.activityType = 'CREATE_MEDICATION';
         next();
-    }), updatePoints, (req: Request, res: Response) => {
+    }), updatePoints, (req: MedicationRequest, res: Response) => {
         sendSuccessResponse(res, req.body.medication);
     });
 
 // GET: Retrieve all medications for the logged-in user
-router.get('/', asyncHandler(async (req: Request, res: Response) => {
+router.get('/', asyncHandler(async (req: MedicationRequest, res: Response) => {
     const medicationRepository = AppDataSource.getRepository(Medication);
     const medications = await medicationRepository.find({
         where: { user: { id: req.user!.id } }
@@ -65,7 +58,7 @@ router.get('/', asyncHandler(async (req: Request, res: Response) => {
 router.put('/:id',
     idParamValidation,
     medicationValidation,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: MedicationRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             sendErrorResponse(res, 400, 'Validation failed');
@@ -96,14 +89,14 @@ router.put('/:id',
         req.body.medication = medication;
         req.activityType = 'UPDATE_MEDICATION';
         next();
-    }), updatePoints, (req: Request, res: Response) => {
+    }), updatePoints, (req: MedicationRequest, res: Response) => {
         sendSuccessResponse(res, req.body.medication);
     });
 
 // DELETE: Remove a medication
 router.delete('/:id',
     idParamValidation,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: MedicationRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             sendErrorResponse(res, 400, 'Validation failed');
@@ -121,7 +114,7 @@ router.delete('/:id',
         }
         req.activityType = 'DELETE_MEDICATION';
         next();
-    }), updatePoints, (req: Request, res: Response) => {
+    }), updatePoints, (req: MedicationRequest, res: Response) => {
         res.status(204).send();
     });
 

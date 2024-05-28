@@ -1,40 +1,57 @@
-// src/middleware/pointsMiddleware.ts
+// src/middlewares/pointsMiddleware.ts
+
 import { Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../data-source';
 import { User } from '../models/User';
+import config from '../config';
 
-const POINTS_CONFIG = {
-    REGISTER: parseInt(process.env.POINTS_REGISTER ?? '0'),
-    LOGIN: parseInt(process.env.POINTS_LOGIN ?? '0'),
-    CREATE_MEDICATION: parseInt(process.env.POINTS_CREATE_MEDICATION ?? '0'),
-    UPDATE_MEDICATION: parseInt(process.env.POINTS_UPDATE_MEDICATION ?? '0'),
-    DELETE_MEDICATION: parseInt(process.env.POINTS_DELETE_MEDICATION ?? '0')
+export const POINTS_CONFIG = {
+    REGISTER: config.pointsRegister,
+    LOGIN: config.pointsLogin,
+    CREATE_MEDICATION: config.pointsCreateMedication,
+    UPDATE_MEDICATION: config.pointsUpdateMedication,
+    DELETE_MEDICATION: config.pointsDeleteMedication
 };
 
 
+type ActivityType = keyof typeof POINTS_CONFIG;
 
-const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
-    (req: Request, res: Response, next: NextFunction) => {
+interface PointsRequest extends Request {
+    user?: {
+        id: number;
+    };
+    activityType?: ActivityType;
+}
+
+const asyncHandler = (fn: (req: PointsRequest, res: Response, next: NextFunction) => Promise<void>) =>
+    (req: PointsRequest, res: Response, next: NextFunction) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
-export const updatePoints = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const updatePoints = asyncHandler(async (req: PointsRequest, res: Response, next: NextFunction) => {
     const { user, activityType } = req;
 
-    if (!user || !activityType) {
+    if (!user?.id || !activityType) {
         return next();
     }
 
-    const pointsToAdd = POINTS_CONFIG[activityType as keyof typeof POINTS_CONFIG] ?? 0;
+    const pointsToAdd = POINTS_CONFIG[activityType] ?? 0;
+    console.log(`Activity: ${activityType}, Points to Add: ${pointsToAdd}`);
 
     if (pointsToAdd !== 0) {
         const userRepository = AppDataSource.getRepository(User);
-        const userEntity = await userRepository.findOneBy({ id: user.id });
-        if (userEntity) {
-            userEntity.points += pointsToAdd;
-            await userRepository.save(userEntity);
+        try {
+            const userEntity = await userRepository.findOneBy({ id: user.id });
+            if (userEntity) {
+                userEntity.points += pointsToAdd;
+                await userRepository.save(userEntity);
+            }
+        } catch (error) {
+            console.error("Error updating user points:", error);
+            return next(error);
         }
     }
 
     next();
 });
+

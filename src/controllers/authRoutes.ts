@@ -1,5 +1,6 @@
 // src/controllers/authRoutes.ts
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Response, NextFunction } from 'express';
+import { AuthRequest } from '../types/requests';
 import { AppDataSource } from '../data-source';
 import { User } from '../models/User';
 import { validationResult } from 'express-validator';
@@ -23,7 +24,7 @@ const signToken = (userId: number): string => {
 // POST: Register a user
 router.post('/register',
     [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
@@ -50,14 +51,14 @@ router.post('/register',
             console.error("Registration error:", error);
             next(error);
         }
-    }, updatePoints, (req: Request, res: Response) => {
+    }, updatePoints, (req: AuthRequest, res: Response) => {
         sendSuccessResponse(res, 'User registered');
     });
 
 // POST: Login a user
 router.post('/login',
     [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
@@ -88,7 +89,8 @@ router.post('/login',
             console.error("Login error:", error);
             next(error);
         }
-    }, updatePoints, (req: Request, res: Response) => {
+    }, updatePoints, (req: AuthRequest, res: Response) => {
         sendSuccessResponse(res, { accessToken: req.body.token, userId: req.user!.id });
     });
+
 export default router;
