@@ -1,7 +1,7 @@
 // src/types/express/index.d.ts
 import { Request } from 'express';
-import { IUser } from '../../interfaces/IUser';
-import { POINTS_CONFIG } from '../../middlewares/pointsMiddleware';
+import { IUser } from '../../interfaces/IUser.mts';
+import { POINTS_CONFIG } from '../../middlewares/pointsMiddleware.mts';
 
 declare module 'express-serve-static-core' {
   interface Request {

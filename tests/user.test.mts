@@ -1,6 +1,6 @@
-//tests/user.test.ts 
+//tests/user.test.mts 
 
-import { User } from '../src/models/User';
+import { User } from '../src/models/User.mts';
 import bcrypt from 'bcrypt';
 
 

@@ -1,8 +1,8 @@
-// src/services/notificationService.ts
+// src/services/notificationService.mts
 import webPush from 'web-push';
 import admin from 'firebase-admin';
-import { IUser } from '../interfaces/IUser';
-import config from '../config';
+import { IUser } from '../interfaces/IUser.mts';
+import config from '../config.mts';
 
 // Firebase Admin SDK 초기화
 if (!admin.apps.length) {

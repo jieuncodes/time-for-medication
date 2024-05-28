@@ -1,9 +1,9 @@
-// src/middlewares/pointsMiddleware.ts
+// src/middlewares/pointsMiddleware.mts
 
 import { Request, Response, NextFunction } from 'express';
-import { AppDataSource } from '../data-source';
-import { User } from '../models/User';
-import config from '../config';
+import { AppDataSource } from '../data-source.mts';
+import { User } from '../models/User.mts';
+import config from '../config.mts';
 
 export const POINTS_CONFIG = {
     REGISTER: config.pointsRegister,
@@ -36,7 +36,7 @@ export const updatePoints = asyncHandler(async (req: PointsRequest, res: Respons
     }
 
     const pointsToAdd = POINTS_CONFIG[activityType] ?? 0;
-    console.log(`Activity: ${activityType}, Points to Add: ${pointsToAdd}`);
+    console.log(`User ID: ${user.id}, Activity: ${activityType}, Points to Add: ${pointsToAdd}`);
 
     if (pointsToAdd !== 0) {
         const userRepository = AppDataSource.getRepository(User);

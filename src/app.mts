@@ -1,14 +1,20 @@
-// src/app.ts 
+// src/app.mts
+
+console.log("Server is starting...");
+
 import express from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import { AppDataSource } from './data-source';
-import authRoutes from './controllers/authRoutes';
-import medicationRoutes from './controllers/medicationRoutes';
-import config from './config';
-import { errorHandler } from './middlewares/errorHandler';
+import { AppDataSource } from './data-source.mts';
+import authRoutes from './controllers/authRoutes.mts';
+import medicationRoutes from './controllers/medicationRoutes.mts';
+import config from './config.mts';
+import { errorHandler } from './middlewares/errorHandler.mts';
+import { sendErrorResponse } from './utils/response.mts';
+
+
 
 
 const app = express();
@@ -23,9 +29,11 @@ app.use(cors({
 
 // Rate Limiting Middleware
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15m
-    max: 100, // limit each ip 100 request per windowMS
-    message: "Too many requests, please try again later."
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    handler: (req, res) => {
+        sendErrorResponse(res, 429, "Too many requests, please try again later.");
+    }
 });
 app.use(limiter);
 
@@ -58,7 +66,7 @@ if (config.nodeEnv !== 'test') {
     AppDataSource.initialize()
         .then(() => {
             console.log("Data Source has been initialized successfully!");
-            const PORT = config.port ?? 3000;
+            const PORT = config.port ?? 8000;
             app.listen(PORT, () => {
                 console.log(`Server running on port ${PORT}`);
             });

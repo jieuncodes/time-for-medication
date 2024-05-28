@@ -1,4 +1,4 @@
-// src/utils/response.ts
+// src/utils/response.mts
 
 import { Response } from 'express';
 

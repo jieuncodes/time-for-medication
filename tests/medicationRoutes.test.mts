@@ -1,9 +1,9 @@
-// tests/medicationRoutes.test.ts
+// tests/medicationRoutes.test.mts
 import request from 'supertest';
-import app from '../src/app';
-import { AppDataSource } from '../src/data-source';
-import { User } from '../src/models/User';
-import { Medication } from '../src/models/Medication';
+import app from '../src/app.mts';
+import { AppDataSource } from '../src/data-source.mts';
+import { User } from '../src/models/User.mts';
+import { Medication } from '../src/models/Medication.mts';
 
 describe('Medication Routes', () => {
     let token = '';

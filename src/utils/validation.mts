@@ -1,4 +1,4 @@
-// src/utils/validation.ts
+// src/utils/validation.mts
 
 import { body, param } from 'express-validator';
 

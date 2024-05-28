@@ -1,22 +1,24 @@
-// src/models/User.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from "typeorm";
-import { Medication } from "./Medication";
+// src/models/User.mts
+import {
+  Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert
+} from "typeorm";
 import bcrypt from 'bcrypt';
-import { IUser } from '../interfaces/IUser';
+import { Medication } from "./Medication.mts";
+import { IUser } from '../interfaces/IUser.mts';
 
 @Entity()
 export class User implements IUser {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  username: string;
+  username!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column({ default: 0 })
-  points: number;
+  points!: number;
 
   @Column({ nullable: true })
   fcmToken?: string;
@@ -25,7 +27,7 @@ export class User implements IUser {
   subscription?: any;
 
   @OneToMany(() => Medication, medication => medication.user, { cascade: ['insert', 'update', 'remove'] })
-  medications: Medication[];
+  medications!: Medication[];
 
   @BeforeInsert()
   async hashPassword() {

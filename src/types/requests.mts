@@ -1,8 +1,8 @@
-// src/types/requests.ts
+// src/types/requests.mts
 import { Request } from 'express';
-import { IUser } from '../interfaces/IUser';
-import { Medication } from '../models/Medication';
-import { POINTS_CONFIG } from '../middlewares/pointsMiddleware';
+import { IUser } from '../interfaces/IUser.mts';
+import { Medication } from '../models/Medication.mts';
+import { POINTS_CONFIG } from '../middlewares/pointsMiddleware.mts';
 
 export interface PartialUser extends Partial<IUser> {
     id: number;

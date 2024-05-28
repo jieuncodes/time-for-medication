@@ -1,8 +1,13 @@
-// src/config.ts
-
+/// src/config.mts ///
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
+// Convert import.meta.url to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+console.log(`Loading environment variables from .env.${process.env.NODE_ENV}`);
 dotenv.config({ path: path.resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 const requiredEnvVariables = [
@@ -21,9 +26,15 @@ for (const variable of requiredEnvVariables) {
   }
 }
 
+const port = parseInt(process.env.PORT!, 10);
+if (isNaN(port)) {
+  console.error(`Invalid PORT environment variable: ${process.env.PORT}`);
+  process.exit(1);
+}
+
 const config = {
   dbHost: process.env.DB_HOST,
-  dbPort: parseInt(process.env.DB_PORT!, 5432),
+  dbPort: parseInt(process.env.DB_PORT!, 10),
   dbUsername: process.env.DB_USERNAME,
   dbPassword: process.env.DB_PASSWORD,
   dbName: process.env.DB_NAME,
@@ -42,14 +53,14 @@ const config = {
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
     universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
   },
-  port: parseInt(process.env.PORT!, 3000),
+  port,
   allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || [],
   nodeEnv: process.env.NODE_ENV || 'development',
-  pointsRegister: parseInt(process.env.POINTS_REGISTER!, 0),
-  pointsLogin: parseInt(process.env.POINTS_LOGIN!, 0),
-  pointsCreateMedication: parseInt(process.env.POINTS_CREATE_MEDICATION!, 0),
-  pointsUpdateMedication: parseInt(process.env.POINTS_UPDATE_MEDICATION!, 0),
-  pointsDeleteMedication: parseInt(process.env.POINTS_DELETE_MEDICATION!, 0)
+  pointsRegister: parseInt(process.env.POINTS_REGISTER!, 10),
+  pointsLogin: parseInt(process.env.POINTS_LOGIN!, 10),
+  pointsCreateMedication: parseInt(process.env.POINTS_CREATE_MEDICATION!, 10),
+  pointsUpdateMedication: parseInt(process.env.POINTS_UPDATE_MEDICATION!, 10),
+  pointsDeleteMedication: parseInt(process.env.POINTS_DELETE_MEDICATION!, 10)
 };
 
 export default config;

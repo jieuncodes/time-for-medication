@@ -1,15 +1,15 @@
-// src/controllers/authRoutes.ts
+// src/controllers/authRoutes.mts
 import { Router, Response, NextFunction } from 'express';
-import { AuthRequest } from '../types/requests';
-import { AppDataSource } from '../data-source';
-import { User } from '../models/User';
+import { AuthRequest } from '../types/requests.mts';
+import { AppDataSource } from '../data-source.mts';
+import { User } from '../models/User.mts';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { updatePoints } from '../middlewares/pointsMiddleware';
-import { sendErrorResponse, sendSuccessResponse } from '../utils/response';
-import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation';
-import config from '../config';
+import { updatePoints } from '../middlewares/pointsMiddleware.mts';
+import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
+import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
+import config from '../config.mts';
 
 const router = Router();
 
