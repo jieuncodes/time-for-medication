@@ -1,6 +1,6 @@
 import React from "react";
 import { StoryFn, Meta } from "@storybook/react";
-import Person from "components/atoms/icons/Person";
+import Person from "../../../../components/atoms/icons/Person";
 import { IconButton, IconButtonProps } from "./IconButton";
 
 export default {

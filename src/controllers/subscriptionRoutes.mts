@@ -1,9 +1,9 @@
-// src/controllers/subscriptionRoutes.ts
+// src/controllers/subscriptionRoutes.mts
 import { Router, Response, NextFunction, RequestHandler } from 'express';
 import { body, validationResult } from 'express-validator';
-import { AppDataSource } from '../data-source';
-import { User } from '../models/User';
-import { SubscriptionRequest } from '../types/requests';
+import { AppDataSource } from '../data-source.mts';
+import { User } from '../models/User.mts';
+import { SubscriptionRequest } from '../types/requests.mts';
 
 const router = Router();
 

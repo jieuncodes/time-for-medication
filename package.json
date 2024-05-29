@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_ENV=development concurrently \"next dev\" \"node --import ./scripts/register-ts-node.mjs src/app.mts\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --runInBand",
-    "test-file": "jest --testPathPattern",
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --runInBand",
+    "test-file": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --testPathPattern",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -30,7 +30,8 @@
     "tailwind-styled-components": "^2.2.0",
     "theme-change": "^2.5.0",
     "typeorm": "^0.3.20",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
@@ -53,6 +54,8 @@
     "@types/react-dom": "^18",
     "@types/supertest": "^6.0.2",
     "@types/web-push": "^3.6.3",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "eslint-plugin-storybook": "^0.8.0",
@@ -61,7 +64,9 @@
     "storybook": "^8.1.1",
     "supertest": "^7.0.0",
     "tailwindcss": "^3.4.1",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.1.4",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5"
-  }
+  },
+  "type": "module"
 }

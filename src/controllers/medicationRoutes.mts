@@ -1,13 +1,13 @@
-// src/routes/medicationRoutes.ts
+// src/routes/medicationRoutes.mts
 import { Router, Response, NextFunction, RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
-import { AppDataSource } from '../data-source';
-import { Medication } from '../models/Medication';
-import { authenticateToken } from '../middlewares/authenticateToken';
-import { updatePoints } from '../middlewares/pointsMiddleware';
-import { sendErrorResponse, sendSuccessResponse } from '../utils/response';
-import { idParamValidation, medicationValidation } from '../utils/validation';
-import { MedicationRequest } from '../types/requests';
+import { AppDataSource } from '../data-source.mts';
+import { Medication } from '../models/Medication.mts';
+import { authenticateToken } from '../middlewares/authenticateToken.mts';
+import { updatePoints } from '../middlewares/pointsMiddleware.mts';
+import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
+import { idParamValidation, medicationValidation } from '../utils/validation.mts';
+import { MedicationRequest } from '../types/requests.mts';
 
 const router = Router();
 

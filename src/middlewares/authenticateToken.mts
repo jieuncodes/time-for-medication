@@ -1,11 +1,11 @@
-// src/middlewares/authenticateToken.ts
+// src/middlewares/authenticateToken.mts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AppDataSource } from '../data-source';
-import { User } from '../models/User';
-import { sendErrorResponse } from '../utils/response';
-import config from '../config';
-import { PartialUser } from '../types/requests';
+import { AppDataSource } from '../data-source.mts';
+import { User } from '../models/User.mts';
+import { sendErrorResponse } from '../utils/response.mts';
+import config from '../config.mts';
+import { PartialUser } from '../types/requests.mts';
 
 interface AuthRequest extends Request {
     user?: PartialUser;

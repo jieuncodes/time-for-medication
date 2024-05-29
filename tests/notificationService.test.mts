@@ -1,5 +1,6 @@
-import { IUser } from '../src/interfaces/IUser';
-import notificationService from '../src/services/notificationService';
+// tests/notificationService.test.mts
+import { IUser } from '../src/interfaces/IUser.mts';
+import notificationService from '../src/services/notificationService.mts';
 import webPush from 'web-push';
 import admin from 'firebase-admin';
 
