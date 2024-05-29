@@ -36,7 +36,7 @@
     "next-env.d.mts",
     ".next/types/**/*.ts",
     "**/*.mts",
-    "**/*.tsx",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

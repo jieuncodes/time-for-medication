@@ -1,10 +1,10 @@
 /// tests/middlewares.test.mts ///
 
 import request from 'supertest';
-import app from '../src/app.mts';
-import { AppDataSource } from '../src/data-source.mts';
-import { User } from '../src/models/User.mts';
-import { POINTS_CONFIG } from '../src/middlewares/pointsMiddleware.mts';
+import app from '@/app.mts';
+import { AppDataSource } from '@/data-source.mts';
+import { User } from '@/models/User.mts';
+import { POINTS_CONFIG } from '@/middlewares/pointsMiddleware.mts';
 
 describe('Middleware Tests', () => {
     let token: string;
