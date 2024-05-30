@@ -2,9 +2,12 @@
 
 import request from 'supertest';
 import app from '@/app.mts';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppDataSource } from '@/data-source.mts';
 import { User } from '@/models/User.mts';
+import { Medication } from '@/models/Medication.mts';
 import { POINTS_CONFIG } from '@/middlewares/pointsMiddleware.mts';
+import config from '../src/config.mts';
 
 describe('Middleware Tests', () => {
     let token: string;
@@ -94,5 +97,46 @@ describe('Middleware Tests', () => {
             expect(userAfterLogin).not.toBeNull();
             expect(userAfterLogin!.points).toBe(POINTS_CONFIG.REGISTER + 2 * POINTS_CONFIG.LOGIN);
         });
+    });
+});
+
+describe('Middleware - JWT Expiration', () => {
+    let expiredToken = '';
+    const testUser = {
+        username: 'expirationtestuser',
+        password: 'Password123!',
+        fcmToken: 'fakeFcmToken123'
+    };
+
+    beforeAll(async () => {
+        await AppDataSource.initialize();
+        await request(app).post('/api/register').send(testUser);
+        const loginResponse = await request(app).post('/api/login').send(testUser);
+        const tokenPayload = jwt.verify(loginResponse.body.data.accessToken, config.accessTokenSecret!) as JwtPayload;
+        tokenPayload.exp = Math.floor(Date.now() / 1000) - 30; // Set expiration to 30 seconds in the past
+        expiredToken = jwt.sign(tokenPayload, config.accessTokenSecret!);
+    });
+
+    afterAll(async () => {
+        await AppDataSource.transaction(async transactionalEntityManager => {
+            const user = await transactionalEntityManager.findOne(User, {
+                where: { username: testUser.username },
+                relations: ['medications']
+            });
+
+            if (user) {
+                await transactionalEntityManager.remove(Medication, user.medications);
+                await transactionalEntityManager.remove(User, user);
+            }
+        });
+        await AppDataSource.destroy();
+    });
+
+    test('Should reject expired token', async () => {
+        const response = await request(app)
+            .get('/api/medications')
+            .set('Authorization', `Bearer ${expiredToken}`);
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe('Token has expired, please log in again.');
     });
 });

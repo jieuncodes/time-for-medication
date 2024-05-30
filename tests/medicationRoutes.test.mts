@@ -89,3 +89,71 @@ describe('Medication Routes', () => {
     });
 
 });
+
+describe('Medication Routes - Edge Case Tests', () => {
+    let token = '';
+    let medicationId = '';
+    const testUser = {
+        username: 'edgecaseuser',
+        password: 'Password123!',
+        fcmToken: 'fakeFcmToken123'
+    };
+
+    beforeAll(async () => {
+        await AppDataSource.initialize();
+        await request(app).post('/api/register').send(testUser);
+        const loginResponse = await request(app).post('/api/login').send(testUser);
+        token = loginResponse.body.data.accessToken;
+    });
+
+    afterAll(async () => {
+        await AppDataSource.transaction(async transactionalEntityManager => {
+            const user = await transactionalEntityManager.findOne(User, {
+                where: { username: testUser.username },
+                relations: ['medications']
+            });
+
+            if (user) {
+                await transactionalEntityManager.remove(Medication, user.medications);
+                await transactionalEntityManager.remove(User, user);
+            }
+        });
+        await AppDataSource.destroy();
+    });
+
+    test('Add Medication with Invalid Date Format', async () => {
+        const response = await request(app)
+            .post('/api/medications')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: 'Paracetamol',
+                dosage: '500mg',
+                frequency: 'Twice a day',
+                nextAlarm: 'invalid-date'
+            });
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Validation failed');
+    });
+
+    test('Update Medication with Invalid Date Format', async () => {
+        const createResponse = await request(app)
+            .post('/api/medications')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: 'Paracetamol',
+                dosage: '500mg',
+                frequency: 'Twice a day',
+                nextAlarm: new Date().toISOString()
+            });
+        medicationId = createResponse.body.data.id;
+
+        const response = await request(app)
+            .put(`/api/medications/${medicationId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                nextAlarm: 'invalid-date'
+            });
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('Validation failed');
+    });
+});
