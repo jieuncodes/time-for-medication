@@ -10,6 +10,7 @@ import { updatePoints } from '../middlewares/pointsMiddleware.mts';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
 import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
 import config from '../config.mts';
+import { asyncHandler } from '../utils/asyncHandler.mts';
 
 const router = Router();
 
@@ -24,72 +25,63 @@ const signToken = (userId: number): string => {
 // POST: Register a user
 router.post('/register',
     [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
-    async (req: AuthRequest, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
         const { username, password, fcmToken } = req.body;
-        try {
-            const userRepository = AppDataSource.getRepository(User);
-            const existingUser = await userRepository.findOneBy({ username });
-            if (existingUser) {
-                return sendErrorResponse(res, 400, 'Username already taken');
-            }
-
-            let user = new User();
-            user.username = username;
-            user.password = password;
-            user.fcmToken = fcmToken;
-            await userRepository.save(user);
-
-            req.user = user;
-            req.activityType = 'REGISTER';
-            next();
-        } catch (error) {
-            console.error("Registration error:", error);
-            next(error);
+        const userRepository = AppDataSource.getRepository(User);
+        const existingUser = await userRepository.findOneBy({ username });
+        if (existingUser) {
+            return sendErrorResponse(res, 400, 'Username already taken');
         }
-    }, updatePoints, (req: AuthRequest, res: Response) => {
+
+        let user = new User();
+        user.username = username;
+        user.password = password;
+        user.fcmToken = fcmToken;
+        await userRepository.save(user);
+
+        req.user = user;
+        req.activityType = 'REGISTER';
+        next();
+    }), updatePoints, (req: AuthRequest, res: Response) => {
         sendSuccessResponse(res, 'User registered');
     });
+
 
 // POST: Login a user
 router.post('/login',
     [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
-    async (req: AuthRequest, res: Response, next: NextFunction) => {
+    asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
         const { username, password, fcmToken } = req.body;
-        try {
-            const userRepository = AppDataSource.getRepository(User);
-            const user = await userRepository.findOneBy({ username });
-            if (!user) {
-                return sendErrorResponse(res, 401, 'Invalid credentials');
-            }
-            const passwordIsValid = await bcrypt.compare(password, user.password);
-            if (!passwordIsValid) {
-                return sendErrorResponse(res, 401, 'Invalid credentials');
-            }
-
-            if (fcmToken) {
-                user.fcmToken = fcmToken;
-                await userRepository.save(user);
-            }
-
-            req.user = user;
-            req.body.token = signToken(user.id);
-            req.activityType = 'LOGIN';
-            next();
-        } catch (error) {
-            console.error("Login error:", error);
-            next(error);
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository.findOneBy({ username });
+        if (!user) {
+            return sendErrorResponse(res, 401, 'Invalid credentials');
         }
-    }, updatePoints, (req: AuthRequest, res: Response) => {
+        const passwordIsValid = await bcrypt.compare(password, user.password);
+        if (!passwordIsValid) {
+            return sendErrorResponse(res, 401, 'Invalid credentials');
+        }
+
+        if (fcmToken) {
+            user.fcmToken = fcmToken;
+            await userRepository.save(user);
+        }
+
+        req.user = user;
+        req.body.token = signToken(user.id);
+        req.activityType = 'LOGIN';
+        next();
+    }), updatePoints, (req: AuthRequest, res: Response) => {
         sendSuccessResponse(res, { accessToken: req.body.token, userId: req.user!.id });
     });
 
