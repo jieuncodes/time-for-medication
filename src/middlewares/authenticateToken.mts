@@ -20,6 +20,9 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
 
     jwt.verify(token, config.accessTokenSecret as string, async (err, decoded: any) => {
         if (err) {
+            if (err.name === 'TokenExpiredError') { 
+                return sendErrorResponse(res, 401, 'Token has expired, please log in again.');
+            }
             return sendErrorResponse(res, 403, 'Forbidden - invalid token');
         }
 
@@ -28,7 +31,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
             if (!user) {
                 return sendErrorResponse(res, 403, 'No user found with this ID');
             }
-            req.user = { id: user.id, username: user.username }; // Ensuring PartialUser type
+            req.user = { id: user.id, username: user.username };
             next();
         } catch (error) {
             console.error("Error fetching user:", error);
