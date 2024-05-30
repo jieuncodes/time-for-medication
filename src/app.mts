@@ -1,6 +1,5 @@
 // src/app.mts
 
-console.log("Server is starting...");
 
 import express from 'express';
 import helmet from 'helmet';
@@ -62,17 +61,17 @@ if (!['development', 'test'].includes(config.nodeEnv)) {
 // Global Error Handler
 app.use(errorHandler);
 
+const PORT = config.port ?? 8000;
 if (config.nodeEnv !== 'test') {
+    console.log(`Environment ${config.nodeEnv}`)
     AppDataSource.initialize()
         .then(() => {
-            console.log("Data Source has been initialized successfully!");
-            const PORT = config.port ?? 8000;
             app.listen(PORT, () => {
                 console.log(`Server running on port ${PORT}`);
             });
         })
         .catch((error) => {
-            console.error("Error during Data Source initialization:", error);
+            console.error(`Error during server startup on port ${PORT}`, error);
         });
 }
 

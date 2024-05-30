@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --runInBand",
-    "test-file": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --testPathPattern",
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --runInBand --detectOpenHandles",
+    "test-file": "cross-env NODE_ENV=test node --experimental-vm-modules  node_modules/jest/bin/jest.js --testPathPattern --detectOpenHandles",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
