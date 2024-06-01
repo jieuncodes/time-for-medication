@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt';
 import { updatePoints } from '../middlewares/pointsMiddleware.mts';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
 import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
+import { authenticateToken } from '../middlewares/authenticateToken.mts';
 import config from '../config.mts';
 import { asyncHandler } from '../utils/asyncHandler.mts';
 
@@ -84,5 +85,20 @@ router.post('/login',
     }), updatePoints, (req: AuthRequest, res: Response) => {
         sendSuccessResponse(res, { accessToken: req.body.token, userId: req.user!.id });
     });
+
+// DELETE: Delete a user account 
+router.delete('/delete-account',
+    authenticateToken,
+    asyncHandler(async (req: AuthRequest, res: Response) => {
+        const userRepository = AppDataSource.getRepository(User);
+        const result = await userRepository.delete({ id: req.user!.id });
+
+        if (result.affected === 0) {
+            return sendErrorResponse(res, 404, 'User not found');
+        }
+
+        sendSuccessResponse(res, 'User account deleted successfully');
+    })
+);
 
 export default router;
