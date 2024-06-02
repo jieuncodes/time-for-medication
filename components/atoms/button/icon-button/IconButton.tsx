@@ -1,24 +1,22 @@
-import Link from "next/link";
-import { FC, SVGProps } from "react";
+import React, { FC, SVGProps } from "react";
 
-export interface IconButtonProps {
-  url: string;
-  iconComponent: FC<SVGProps<SVGSVGElement>>;
-  size?: "medium";
+interface IconWrapperProps extends SVGProps<SVGSVGElement> {
+  size?: number;
+  color?: string;
 }
 
-export const IconButton: FC<IconButtonProps> = ({
-  url,
-  iconComponent: IconComponent,
-  size = "medium",
+const IconWrapper: FC<IconWrapperProps> = ({
+  size = 24,
+  color = "currentColor",
+  children,
+  ...props
 }) => {
-  const sizeClass = {
-    medium: "w-6 h-6",
-  }[size];
-
-  return (
-    <Link href={url} className={`flex align-middle ${sizeClass}`}>
-      <IconComponent />
-    </Link>
-  );
+  return React.cloneElement(children as React.ReactElement, {
+    width: size,
+    height: size,
+    stroke: color,
+    ...props,
+  });
 };
+
+export default IconWrapper;
