@@ -1,15 +1,9 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -36,17 +30,14 @@
     "next-env.d.mts",
     ".next/types/**/*.ts",
     "**/*.mts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "components/atoms/button/icon-button/RoundButton.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "ts-node": {
     "transpileOnly": true,
     "files": true,
     "esm": true,
-    "require": [
-      "tsconfig-paths/register"
-    ]
+    "require": ["tsconfig-paths/register"]
   }
 }
