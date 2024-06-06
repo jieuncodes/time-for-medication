@@ -4,13 +4,15 @@ import tw from "tailwind-styled-components";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
 import FormInput from "components/atoms/inputs/FormInput";
 import { Form } from "@/components/ui/form";
 import { RoundButton } from "components/atoms/button/icon-button/RoundButton";
+import { LinkText } from "components/common";
 
-const LoginForm = () => {
+const SignUpForm = () => {
   const formSchema = z.object({
+    name: z.string({ required_error: "Name is required." }),
+    username: z.string({ required_error: "Username is required." }),
     email: z.string({ required_error: "Email is required." }).email({
       message: "Not a valid email address.",
     }),
@@ -34,66 +36,67 @@ const LoginForm = () => {
   return (
     <FormContainer>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormInput name="email" form={form} placeholder="Email" />
-          <FormInput name="password" form={form} placeholder="Password" />
-          <Options>
-            <RememberMe>
-              <Checkbox id="remember" />
-              <Label htmlFor="remember">Remember me</Label>
-            </RememberMe>
-            <ForgotPassword>Forgot password?</ForgotPassword>
-          </Options>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <RowForms>
+            <FormInput name="name" form={form} label="Name" />
+            <FormInput name="username" form={form} label="Username" />
+          </RowForms>
+          <ColForms>
+            <FormInput name="email" form={form} label="Email" />
+            <FormInput
+              name="password"
+              form={form}
+              placeholder="6+ charaters"
+              label="Password"
+            />
+          </ColForms>
 
-          <LoginButton>Log In</LoginButton>
+          <LoginButton>Create Account</LoginButton>
+
+          <Options>
+            {`Already have an account?`}
+            <LinkText href="/login">{`Sign In`}</LinkText>
+          </Options>
         </form>
       </Form>
     </FormContainer>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;
 
 const FormContainer = tw.div`
   mt-4
+  flex
   w-full
+  flex-col
+  pb-20
 `;
 const Options = tw.div`
-  mt-2
+  h-fit-content
+  mt-4
   flex
+  w-full
   items-center
-  justify-between
-`;
-const RememberMe = tw.label`
-  mb-4
-  ml-2
-  flex
-  items-center
-  space-x-2
-  text-gray-400
-`;
-const ForgotPassword = tw.a`
-  mb-4
-  cursor-pointer
-  text-sm
-  text-gray-400
-  hover:text-gray-200
+  justify-center
+  gap-2
 `;
 const LoginButton = tw(RoundButton)`
-  mt-4
-  h-12
-  rounded-full
+  mt-12
   border-none
   bg-blue-500
   text-white
   hover:bg-blue-600
-  hover:text-white
 `;
 
-const Label = tw.label`
-  text-sm
-  font-medium
-  leading-none
-  peer-disabled:cursor-not-allowed
-  peer-disabled:opacity-70
+const RowForms = tw.div`
+  grid
+  grid-cols-2
+  gap-4
+`;
+const ColForms = tw.div`
+  mt-8
+  grid
+  grid-cols-1
+  gap-8
 `;

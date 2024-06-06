@@ -11,13 +11,15 @@ import tw from "tailwind-styled-components";
 interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
   form: UseFormReturn<T>;
-  placeholder: string;
+  placeholder?: string;
+  label?: string;
 }
 
 const FormInput = <T extends FieldValues>({
   name,
   form,
   placeholder,
+  label,
 }: FormInputProps<T>) => {
   return (
     <FormField
@@ -26,7 +28,10 @@ const FormInput = <T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           <FormControl>
-            <StyledInput placeholder={placeholder} {...field} />
+            <>
+              {label && <Label htmlFor={name}>{label}</Label>}
+              <StyledInput placeholder={placeholder} {...field} />
+            </>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -37,6 +42,18 @@ const FormInput = <T extends FieldValues>({
 
 export default FormInput;
 
-const StyledInput = tw(
-  Input
-)`border border-gray-400 rounded-xl h-12 text-black placeholder:text-gray-500`;
+const StyledInput = tw(Input)`
+  text-md
+  h-12
+  rounded-xl
+  border
+  border-gray-300
+  pl-6
+  text-black
+  placeholder:text-gray-400
+`;
+
+const Label = tw.label`
+  font-bold
+  text-black
+`;

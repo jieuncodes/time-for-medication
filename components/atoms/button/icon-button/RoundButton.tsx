@@ -1,6 +1,28 @@
 import tw from "tailwind-styled-components";
-import { Button } from "@/components/ui/button";
 
-export const RoundButton = tw(
-  Button
-)`w-full border rounded-full text-black border-gray-400 h-12 hover:bg-black hover:text-white hover:border-transparent space-x-2 gap-2 transition-colors duration-400 ease-in-out`;
+export const RoundButton = tw.button`
+  duration-400
+  inline-flex
+  h-12
+  w-full
+  items-center
+  justify-center
+  gap-2
+  space-x-2
+  whitespace-nowrap
+  rounded-full
+  border
+  text-sm
+  font-medium
+  text-black
+  ring-offset-background
+  transition-colors
+  transition-colors
+  ease-in-out
+  focus-visible:outline-none
+  focus-visible:ring-2
+  focus-visible:ring-ring
+  focus-visible:ring-offset-2
+  disabled:pointer-events-none
+  disabled:opacity-50
+`;
