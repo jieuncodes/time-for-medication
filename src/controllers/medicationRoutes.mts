@@ -30,7 +30,7 @@ router.post('/',
         medication.dosage = dosage;
         medication.frequency = frequency;
         medication.nextAlarm = new Date(nextAlarm);
-        medication.user = req.user as any; // Cast to any to avoid type issues
+        medication.user = req.user as any;
 
         const medicationRepository = AppDataSource.getRepository(Medication);
         await medicationRepository.save(medication);

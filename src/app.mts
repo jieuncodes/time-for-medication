@@ -20,7 +20,29 @@ const app = express();
 
 // Security Middleware
 
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'], //need to edit
+        styleSrc: ["'self'", 'https://fonts.googleapis.com'], //need to edit
+        imgSrc: ["'self'", 'https://images.unsplash.com'], //need to edit
+        frameSrc: ["'self'", 'https://www.youtube.com'] //need to edit
+    },
+    reportOnly: config.nodeEnv !== 'production' // Report-only mode in non-production environments
+}));
+
+app.use(helmet.hsts({
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+}));
+
+app.use(helmet.hidePoweredBy());
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.noSniff());
+app.use(helmet.xssFilter());
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
+
 app.use(cors({
     origin: config.allowedOrigins,
     optionsSuccessStatus: 200
