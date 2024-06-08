@@ -11,6 +11,7 @@ export const Content = tw.div`
   overflow-y-scroll
   px-6
   py-8
+  text-black
 `;
 export const Title = tw.h1`
   left-0

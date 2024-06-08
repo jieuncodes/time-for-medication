@@ -1,13 +1,17 @@
 "use client";
 
-import tw from "tailwind-styled-components";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import FormInput from "components/inputs/FormInput";
 import { Form } from "@/components/ui/form";
-import { RoundButton } from "components/button/RoundButton";
 import { LinkText } from "components/common";
+import {
+  FormContainer,
+  ColForms,
+  Options,
+  LoginButton,
+} from "./SignUpForm.styles";
 
 const SignUpForm = () => {
   const formSchema = z
@@ -72,31 +76,3 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
-
-const FormContainer = tw.div`
-  flex
-  w-full
-  flex-col
-`;
-const Options = tw.div`
-  h-fit-content
-  mt-4
-  flex
-  w-full
-  items-center
-  justify-center
-  gap-2
-`;
-const LoginButton = tw(RoundButton)`
-  mt-12
-  border-none
-  bg-blue-500
-  text-white
-  hover:bg-blue-600
-`;
-
-const ColForms = tw.div`
-  grid
-  grid-cols-1
-  gap-8
-`;

@@ -4,7 +4,7 @@ import { Header } from "components/header/Header";
 export default function Home() {
   return (
     <main>
-      <Content className="bg-red-50">
+      <Content>
         <Header />
       </Content>
     </main>
