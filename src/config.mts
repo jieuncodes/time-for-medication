@@ -34,6 +34,7 @@ const requiredEnvVariables = [
 ];
 
 for (const variable of requiredEnvVariables) {
+  console.log("variable", variable);
   if (!process.env[variable]) {
     console.error(`Environment variable ${variable} is missing`);
     process.exit(1);
