@@ -19,10 +19,16 @@ export const usernameValidation = [
 
 export const passwordValidation = [
     body('password')
-        .isStrongPassword()
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1  
+        })
         .withMessage('Password must meet the strength requirements')
-        .isLength({ min: 6, max: 30 })
-        .withMessage('Password must be between 6 and 30 characters long')
+        .isLength({ min: 8, max: 30 })
+        .withMessage('Password must be between 8 and 30 characters long')
 ];
 
 export const fcmTokenValidation = [
