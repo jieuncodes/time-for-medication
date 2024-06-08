@@ -8,9 +8,11 @@ import { Medication } from '@/models/Medication.mts';
 describe('Medication Routes', () => {
     let token = '';
     let medicationId = '';
-    const testUsername = 'testuser';
+    const testEmail = 'testuser@test.test';
+    const username = 'testuser';
     const testUser = {
-        username: testUsername,
+        email: testEmail,
+        username: username,
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
@@ -25,7 +27,7 @@ describe('Medication Routes', () => {
         await AppDataSource.initialize();
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: testUsername },
+                where: { email: testEmail },
                 relations: ['medications']
             });
 
@@ -43,7 +45,7 @@ describe('Medication Routes', () => {
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: testUsername },
+                where: { email: testEmail },
                 relations: ['medications']
             });
 
@@ -94,6 +96,7 @@ describe('Medication Routes - Edge Case Tests', () => {
     let token = '';
     let medicationId = '';
     const testUser = {
+        email: 'edgecaseuser@test.test',
         username: 'edgecaseuser',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
@@ -109,7 +112,7 @@ describe('Medication Routes - Edge Case Tests', () => {
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: testUser.username },
+                where: { email: testUser.email },
                 relations: ['medications']
             });
 

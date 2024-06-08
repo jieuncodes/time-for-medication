@@ -2,20 +2,33 @@
 
 import { body, param } from 'express-validator';
 
+export const emailValidation = [
+    body('email')
+        .isEmail()
+        .withMessage('Must be a valid email address')
+];
+
 export const usernameValidation = [
     body('username')
-        .isLength({ min: 6, max: 30 })
-        .withMessage('Username must be between 6 and 30 characters long')
+        .isString()
+        .isLength({ min: 6, max: 20 })
+        .withMessage('Username must be between 6 and 20 characters long')
         .matches(/^\w+$/)
-        .withMessage('Username must contain only letters, numbers, and underscores')
+        .withMessage('Username can only contain letters, numbers, and underscores')
 ];
 
 export const passwordValidation = [
     body('password')
-        .isStrongPassword()
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1  
+        })
         .withMessage('Password must meet the strength requirements')
-        .isLength({ min: 10, max: 30 })
-        .withMessage('Password must be between 10 and 30 characters long')
+        .isLength({ min: 8, max: 100 })
+        .withMessage('Password must be between 8 and 100 characters long')
 ];
 
 export const fcmTokenValidation = [
