@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import FormInput from "components/inputs/FormInput";
-import { Form } from "@/components/ui/form";
+import { Form } from "components/ui/form";
 import { LinkText } from "components/common";
 import {
   FormContainer,
