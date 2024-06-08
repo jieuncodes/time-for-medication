@@ -21,9 +21,9 @@ export default function RootLayout({
           </div>
           <div className="mockup-phone">
             <div className="camera"></div>
-            <div className="display ">
-              <div className="artboard artboard-demo phone-4 bg-white ">
-                <div className=" w-full relative  h-[780px] flex-col items-center bg-base-100">
+            <div className="display">
+              <div className="artboard phone-4 bg-white">
+                <div className="w-full relative h-full overflow-y-scroll flex-col items-center bg-base-100">
                   {children}
                 </div>
               </div>

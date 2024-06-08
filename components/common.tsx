@@ -1,12 +1,14 @@
 import tw from "tailwind-styled-components";
 
 export const Content = tw.div`
+  top-0
   flex
-  h-full
+  h-auto
   w-full
   flex-col
   items-center
   justify-center
+  overflow-y-scroll
   px-6
   py-8
 `;
