@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import { AppDataSource } from './data-source.mts';
 import authRoutes from './controllers/authRoutes.mts';
 import medicationRoutes from './controllers/medicationRoutes.mts';
+import subscriptionRoutes from './controllers/subscriptionRoutes.mts';
 import config from './config.mts';
 import { errorHandler } from './middlewares/errorHandler.mts';
 import { sendErrorResponse } from './utils/response.mts';
@@ -48,22 +49,23 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 
-// Rate Limiting Middleware
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    handler: (req, res) => {
-        sendErrorResponse(res, 429, "Too many requests, please try again later.");
-    }
-});
-app.use(limiter);
-
 
 app.use(cookieParser());
 app.use(express.json());
 
-app.use('/api', authRoutes);
-app.use('/api/medications', medicationRoutes);
+// Rate Limiters
+const RateLimiter = (maxRequests: number) => rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: maxRequests,
+    handler: (req, res) => {
+        sendErrorResponse(res, 429, "Too many requests, please try again later.");
+    }
+});
+
+app.use(RateLimiter(100)); // General rate limiter
+app.use('/api', authRoutes, RateLimiter(10));
+app.use('/api/medications', medicationRoutes, RateLimiter(50));
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Simulate an error route for testing
 app.get('/api/error', (req, res) => {
