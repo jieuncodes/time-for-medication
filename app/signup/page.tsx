@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components";
 
 import Image from "next/image";
-import { RoundButton } from "components/atoms/button/RoundButton";
+import { RoundButton } from "components/button/RoundButton";
 import { Content, Divider, LinkText, Title } from "components/common";
 import LinkBox from "components/atoms/Link";
 

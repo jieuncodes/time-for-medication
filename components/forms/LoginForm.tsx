@@ -5,9 +5,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
-import FormInput from "components/atoms/inputs/FormInput";
+import FormInput from "components/inputs/FormInput";
 import { Form } from "@/components/ui/form";
-import { RoundButton } from "components/atoms/button/RoundButton";
+import { RoundButton } from "components/button/RoundButton";
 
 const LoginForm = () => {
   const formSchema = z.object({

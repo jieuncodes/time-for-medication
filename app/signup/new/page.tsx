@@ -1,6 +1,6 @@
-import GoBackButton from "components/atoms/button/GoBackButton";
+import GoBackButton from "components/button/GoBackButton";
 import { Content, Title } from "components/common";
-import SignUpForm from "components/molecules/forms/SignUpForm";
+import SignUpForm from "components/forms/SignUpForm";
 import tw from "tailwind-styled-components";
 
 export default function SignUpWithEmail() {

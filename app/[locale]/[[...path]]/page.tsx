@@ -1,9 +1,12 @@
-import { Header } from "components/molecules/header/Header";
+import { Content } from "components/common";
+import { Header } from "components/header/Header";
 
 export default function Home() {
   return (
     <main>
-      <Header />
+      <Content className="bg-red-50">
+        <Header />
+      </Content>
     </main>
   );
 }

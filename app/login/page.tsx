@@ -1,8 +1,8 @@
 import tw from "tailwind-styled-components";
 
 import Image from "next/image";
-import LoginForm from "components/molecules/forms/LoginForm";
-import { RoundButton } from "components/atoms/button/RoundButton";
+import LoginForm from "components/forms/LoginForm";
+import { RoundButton } from "components/button/RoundButton";
 import { Content, Divider, LinkText, Title } from "components/common";
 
 export default function Login() {

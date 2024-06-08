@@ -4,9 +4,9 @@ import tw from "tailwind-styled-components";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import FormInput from "components/atoms/inputs/FormInput";
+import FormInput from "components/inputs/FormInput";
 import { Form } from "@/components/ui/form";
-import { RoundButton } from "components/atoms/button/RoundButton";
+import { RoundButton } from "components/button/RoundButton";
 import { LinkText } from "components/common";
 
 const SignUpForm = () => {
