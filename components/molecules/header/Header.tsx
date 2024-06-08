@@ -5,15 +5,13 @@ import Person from "components/atoms/icons/Person";
 import tw from "tailwind-styled-components";
 import Link from "next/link";
 
-interface HeaderProps {}
-
-export const Header = ({}: HeaderProps) => {
+export const Header = () => {
   const loggedIn = false;
   return (
     <HeaderContainer>
       <NavStart>
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+          <div role="button" className="btn btn-ghost btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -29,10 +27,7 @@ export const Header = ({}: HeaderProps) => {
               />
             </svg>
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
+          <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
             <li>
               <a>Homepage</a>
             </li>
@@ -69,7 +64,10 @@ export const Header = ({}: HeaderProps) => {
           <button>
             <div className="avatar">
               <div className="w-10 rounded-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                <img
+                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  alt="avatar"
+                />
               </div>
             </div>
           </button>
