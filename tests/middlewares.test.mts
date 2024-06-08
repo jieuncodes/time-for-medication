@@ -12,13 +12,13 @@ import config from '../src/config.mts';
 describe('Middleware Tests', () => {
     let token: string;
     const testUser = {
-        username: 'middlewaretestuser',
+        email: 'middlewaretestuser@test.test',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
 
     const testUser2 = {
-        username: 'middlewaretestuser2',
+        email: 'middlewaretestuser2@test.test',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
@@ -33,7 +33,7 @@ describe('Middleware Tests', () => {
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const users = await transactionalEntityManager.find(User, {
-                where: [{ username: testUser.username }, { username: testUser2.username }],
+                where: [{ email: testUser.email }, { email: testUser2.email }],
                 relations: ['medications']
             });
 
@@ -76,14 +76,14 @@ describe('Middleware Tests', () => {
             expect(response.status).toBe(200);
 
             const userRepository = AppDataSource.getRepository(User);
-            const user = await userRepository.findOneBy({ username: testUser2.username });
+            const user = await userRepository.findOneBy({ email: testUser2.email });
             expect(user).not.toBeNull();
             expect(user!.points).toBe(POINTS_CONFIG.REGISTER);
         });
 
         test('should update points on successful login', async () => {
             const userRepository = AppDataSource.getRepository(User);
-            const userBeforeLogin = await userRepository.findOneBy({ username: testUser.username });
+            const userBeforeLogin = await userRepository.findOneBy({ email: testUser.email });
             console.log('Points before login:', userBeforeLogin?.points);
 
             const response = await request(app)
@@ -91,7 +91,7 @@ describe('Middleware Tests', () => {
                 .send(testUser);
             expect(response.status).toBe(200);
 
-            const userAfterLogin = await userRepository.findOneBy({ username: testUser.username });
+            const userAfterLogin = await userRepository.findOneBy({ email: testUser.email });
             console.log('Points after login:', userAfterLogin?.points);
 
             expect(userAfterLogin).not.toBeNull();
@@ -103,7 +103,7 @@ describe('Middleware Tests', () => {
 describe('Middleware - JWT Expiration', () => {
     let expiredToken = '';
     const testUser = {
-        username: 'expirationtestuser',
+        email: 'expirationtestuser@test.test',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
@@ -120,7 +120,7 @@ describe('Middleware - JWT Expiration', () => {
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: testUser.username },
+                where: { email: testUser.email },
                 relations: ['medications']
             });
 

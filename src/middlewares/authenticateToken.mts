@@ -31,7 +31,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
             if (!user) {
                 return sendErrorResponse(res, 403, 'No user found with this ID');
             }
-            req.user = { id: user.id, username: user.username };
+            req.user = { id: user.id, email: user.email };
             next();
         } catch (error) {
             console.error("Error fetching user:", error);

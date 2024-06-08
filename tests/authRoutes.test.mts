@@ -10,7 +10,7 @@ describe('Authentication Routes', () => {
         await AppDataSource.initialize();
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: 'testuser' },
+                where: { email: 'testuser' },
                 relations: ['medications']
             });
 
@@ -24,7 +24,7 @@ describe('Authentication Routes', () => {
     afterAll(async () => {
         await AppDataSource.transaction(async transactionalEntityManager => {
             const user = await transactionalEntityManager.findOne(User, {
-                where: { username: 'testuser' },
+                where: { email: 'testuser' },
                 relations: ['medications']
             });
 
@@ -48,7 +48,7 @@ describe('Authentication Routes', () => {
             const response = await request(app)
                 .post('/api/register')
                 .send({
-                    username: 'testuser',
+                    email: 'testuser@test.test',
                     password: 'Password123!',
                     fcmToken: 'fakeFcmToken123'
                 });
@@ -63,7 +63,7 @@ describe('Authentication Routes', () => {
             const response = await request(app)
                 .post('/api/login')
                 .send({
-                    username: 'testuser',
+                    email: 'testuser@test.test',
                     password: 'Password123!',
                     fcmToken: 'fakeFcmToken123'
                 });
@@ -76,7 +76,7 @@ describe('Authentication Routes', () => {
             const response = await request(app)
                 .post('/api/login')
                 .send({
-                    username: 'testuser',
+                    email: 'testuser@test.test',
                     password: 'WrongPassword1!',
                 });
 

@@ -2,12 +2,10 @@
 
 import { body, param } from 'express-validator';
 
-export const usernameValidation = [
-    body('username')
-        .isLength({ min: 6, max: 30 })
-        .withMessage('Username must be between 6 and 30 characters long')
-        .matches(/^\w+$/)
-        .withMessage('Username must contain only letters, numbers, and underscores')
+export const emailValidation = [
+    body('email')
+        .isEmail()
+        .withMessage('Must be a valid email address')
 ];
 
 export const passwordValidation = [

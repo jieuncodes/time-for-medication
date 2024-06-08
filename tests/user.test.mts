@@ -9,7 +9,7 @@ describe('User Entity', () => {
 
   beforeAll(async () => {
     user = new User();
-    user.username = 'testuser';
+    user.email = 'testuser@test.test';
     user.password = 'Password123!';
     await user.hashPassword(); //manually hash the password, not to use register api
   });

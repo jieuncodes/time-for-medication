@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { updatePoints } from '../middlewares/pointsMiddleware.mts';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
-import { usernameValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
+import { emailValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
 import { authenticateToken } from '../middlewares/authenticateToken.mts';
 import config from '../config.mts';
 import { asyncHandler } from '../utils/asyncHandler.mts';
@@ -25,22 +25,22 @@ const signToken = (userId: number): string => {
 
 // POST: Register a user
 router.post('/register',
-    [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
+    [...emailValidation, ...passwordValidation, ...fcmTokenValidation],
     asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { username, password, fcmToken } = req.body;
+        const { email, password, fcmToken } = req.body;
         const userRepository = AppDataSource.getRepository(User);
-        const existingUser = await userRepository.findOneBy({ username });
+        const existingUser = await userRepository.findOneBy({ email });
         if (existingUser) {
-            return sendErrorResponse(res, 400, 'Username already taken');
+            return sendErrorResponse(res, 400, 'Email already taken');
         }
 
         let user = new User();
-        user.username = username;
+        user.email = email;
         user.password = password;
         user.fcmToken = fcmToken;
         await userRepository.save(user);
@@ -53,18 +53,19 @@ router.post('/register',
     });
 
 
+
 // POST: Login a user
 router.post('/login',
-    [...usernameValidation, ...passwordValidation, ...fcmTokenValidation],
+    [...emailValidation, ...passwordValidation, ...fcmTokenValidation],
     asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { username, password, fcmToken } = req.body;
+        const { email, password, fcmToken } = req.body;
         const userRepository = AppDataSource.getRepository(User);
-        const user = await userRepository.findOneBy({ username });
+        const user = await userRepository.findOneBy({ email });
         if (!user) {
             return sendErrorResponse(res, 401, 'Invalid credentials');
         }
