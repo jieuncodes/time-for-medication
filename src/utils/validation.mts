@@ -27,8 +27,8 @@ export const passwordValidation = [
             minSymbols: 1  
         })
         .withMessage('Password must meet the strength requirements')
-        .isLength({ min: 8, max: 30 })
-        .withMessage('Password must be between 8 and 30 characters long')
+        .isLength({ min: 8, max: 100 })
+        .withMessage('Password must be between 8 and 100 characters long')
 ];
 
 export const fcmTokenValidation = [
