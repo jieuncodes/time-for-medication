@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { updatePoints } from '../middlewares/pointsMiddleware.mts';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/response.mts';
-import { emailValidation, passwordValidation, fcmTokenValidation } from '../utils/validation.mts';
+import { emailValidation, passwordValidation, fcmTokenValidation, usernameValidation } from '../utils/validation.mts';
 import { authenticateToken } from '../middlewares/authenticateToken.mts';
 import config from '../config.mts';
 import { asyncHandler } from '../utils/asyncHandler.mts';
@@ -25,24 +25,30 @@ const signToken = (userId: number): string => {
 
 // POST: Register a user
 router.post('/register',
-    [...emailValidation, ...passwordValidation, ...fcmTokenValidation],
+    [...emailValidation, ...passwordValidation, ...fcmTokenValidation, ...usernameValidation],
     asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { email, password, fcmToken } = req.body;
+        const { email, password, fcmToken, username } = req.body;
         const userRepository = AppDataSource.getRepository(User);
         const existingUser = await userRepository.findOneBy({ email });
         if (existingUser) {
             return sendErrorResponse(res, 400, 'Email already taken');
         }
 
+        const existingUsername = await userRepository.findOneBy({ username });
+        if (existingUsername) {
+            return sendErrorResponse(res, 400, 'Username already taken');
+        }
+
         let user = new User();
         user.email = email;
         user.password = password;
         user.fcmToken = fcmToken;
+        user.username = username;
         await userRepository.save(user);
 
         req.user = user;
@@ -63,7 +69,7 @@ router.post('/login',
             return sendErrorResponse(res, 400, 'Validation failed');
         }
 
-        const { email, password, fcmToken } = req.body;
+        const { email, password, fcmToken  } = req.body;
         const userRepository = AppDataSource.getRepository(User);
         const user = await userRepository.findOneBy({ email });
         if (!user) {

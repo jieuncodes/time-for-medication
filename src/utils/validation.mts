@@ -8,12 +8,21 @@ export const emailValidation = [
         .withMessage('Must be a valid email address')
 ];
 
+export const usernameValidation = [
+    body('username')
+        .isString()
+        .isLength({ min: 6, max: 20 })
+        .withMessage('Username must be between 6 and 20 characters long')
+        .matches(/^\w+$/)
+        .withMessage('Username can only contain letters, numbers, and underscores')
+];
+
 export const passwordValidation = [
     body('password')
         .isStrongPassword()
         .withMessage('Password must meet the strength requirements')
-        .isLength({ min: 10, max: 30 })
-        .withMessage('Password must be between 10 and 30 characters long')
+        .isLength({ min: 6, max: 30 })
+        .withMessage('Password must be between 6 and 30 characters long')
 ];
 
 export const fcmTokenValidation = [

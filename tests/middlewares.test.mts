@@ -13,12 +13,14 @@ describe('Middleware Tests', () => {
     let token: string;
     const testUser = {
         email: 'middlewaretestuser@test.test',
+        username: 'middlewaretestuser',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
 
     const testUser2 = {
         email: 'middlewaretestuser2@test.test',
+        username: 'middlewaretestuser2',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
@@ -104,6 +106,7 @@ describe('Middleware - JWT Expiration', () => {
     let expiredToken = '';
     const testUser = {
         email: 'expirationtestuser@test.test',
+        username: 'expirationtestuser',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };

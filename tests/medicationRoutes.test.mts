@@ -9,8 +9,10 @@ describe('Medication Routes', () => {
     let token = '';
     let medicationId = '';
     const testEmail = 'testuser@test.test';
+    const username = 'testuser';
     const testUser = {
         email: testEmail,
+        username: username,
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
@@ -95,6 +97,7 @@ describe('Medication Routes - Edge Case Tests', () => {
     let medicationId = '';
     const testUser = {
         email: 'edgecaseuser@test.test',
+        username: 'edgecaseuser',
         password: 'Password123!',
         fcmToken: 'fakeFcmToken123'
     };
