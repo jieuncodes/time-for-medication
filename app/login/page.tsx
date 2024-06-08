@@ -2,12 +2,12 @@ import tw from "tailwind-styled-components";
 
 import Image from "next/image";
 import LoginForm from "components/molecules/forms/LoginForm";
-import { RoundButton } from "components/atoms/button/icon-button/RoundButton";
+import { RoundButton } from "components/atoms/button/RoundButton";
 import { Content, Divider, LinkText, Title } from "components/common";
 
 export default function Login() {
   return (
-    <Content>
+    <Content className="h-full">
       <Title>Sign in to MedTime</Title>
       <StyledGoogleBtn>
         <Image

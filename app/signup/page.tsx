@@ -1,13 +1,13 @@
 import tw from "tailwind-styled-components";
 
 import Image from "next/image";
-import { RoundButton } from "components/atoms/button/icon-button/RoundButton";
+import { RoundButton } from "components/atoms/button/RoundButton";
 import { Content, Divider, LinkText, Title } from "components/common";
-import Link from "next/link";
+import LinkBox from "components/atoms/Link";
 
 export default function signUp() {
   return (
-    <Content>
+    <Content className="h-full">
       <Title>Sign up to MedTime</Title>
       <StyledGoogleBtn>
         <Image
@@ -20,9 +20,10 @@ export default function signUp() {
       </StyledGoogleBtn>
 
       <Divider>or</Divider>
-      <StyledEmailSignUpBtn>
-        <Link href="/signup/new">Continue with email</Link>
-      </StyledEmailSignUpBtn>
+
+      <LinkBox href="/signup/new">
+        <StyledEmailSignUpBtn>Continue with email</StyledEmailSignUpBtn>
+      </LinkBox>
 
       <SignUp>
         {`Already have an account? `}
@@ -45,6 +46,6 @@ export const StyledGoogleBtn = tw(RoundButton)`
 `;
 
 export const StyledEmailSignUpBtn = tw(RoundButton)`
-  border-[#DBDBDE]
+  border-gray-200
   text-black
 `;

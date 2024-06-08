@@ -1,6 +1,6 @@
 import React from "react";
 import "./header.css";
-import IconWrapper from "../../atoms/button/icon-button/IconButton";
+import IconWrapper from "../../atoms/button/icon-button/IconWrapper";
 import Person from "components/atoms/icons/Person";
 import tw from "tailwind-styled-components";
 import Link from "next/link";
@@ -19,7 +19,8 @@ export const Header = ({}: HeaderProps) => {
               className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor">
+              stroke="currentColor"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -30,7 +31,8 @@ export const Header = ({}: HeaderProps) => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
             <li>
               <a>Homepage</a>
             </li>
@@ -53,7 +55,8 @@ export const Header = ({}: HeaderProps) => {
             className="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor">
+            stroke="currentColor"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -82,8 +85,34 @@ export const Header = ({}: HeaderProps) => {
   );
 };
 
-export const HeaderContainer = tw.div`navbar bg-base-100 relative top-0 left-0 flex w-full items-center justify-between px-4`;
+export const HeaderContainer = tw.div`
+  navbar
+  relative
+  left-0
+  top-0
+  flex
+  w-full
+  items-center
+  justify-between
+  bg-base-100
+  px-4
+`;
 
-export const NavStart = tw.div`navbar-start flex items-center`;
-export const NavCenter = tw.div`navbar-center absolute left-1/2 transform -translate-x-1/2`;
-export const NavEnd = tw.div`navbar-end flex items-center ml-3`;
+export const NavStart = tw.div`
+  navbar-start
+  flex
+  items-center
+`;
+export const NavCenter = tw.div`
+  navbar-center
+  absolute
+  left-1/2
+  -translate-x-1/2
+  transform
+`;
+export const NavEnd = tw.div`
+  navbar-end
+  ml-3
+  flex
+  items-center
+`;

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import FormInput from "components/atoms/inputs/FormInput";
 import { Form } from "@/components/ui/form";
-import { RoundButton } from "components/atoms/button/icon-button/RoundButton";
+import { RoundButton } from "components/atoms/button/RoundButton";
 
 const LoginForm = () => {
   const formSchema = z.object({

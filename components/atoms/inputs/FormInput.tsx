@@ -13,6 +13,7 @@ interface FormInputProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   placeholder?: string;
   label?: string;
+  moreStyles?: string;
 }
 
 const FormInput = <T extends FieldValues>({
@@ -20,13 +21,14 @@ const FormInput = <T extends FieldValues>({
   form,
   placeholder,
   label,
+  moreStyles,
 }: FormInputProps<T>) => {
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={moreStyles}>
           <FormControl>
             <>
               {label && <Label htmlFor={name}>{label}</Label>}
@@ -48,7 +50,7 @@ const StyledInput = tw(Input)`
   rounded-xl
   border
   border-gray-300
-  pl-6
+  pl-4
   text-black
   placeholder:text-gray-400
 `;
