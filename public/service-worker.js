@@ -1,5 +1,5 @@
 // public/service-worker.js
-self.addEventListener('push', function(event) {
+self.addEventListener('push', function (event) {
     const data = event.data.json();
     self.registration.showNotification(data.title, {
         body: data.body,
@@ -8,11 +8,11 @@ self.addEventListener('push', function(event) {
 
 // serviceworker 등록 및 푸시 구독 설정
 fetch('/api/vapidPublicKey').then(response => response.text()).then(vapidPublicKey => {
-    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+    navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
         registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-        }).then(function(subscription) {
+        }).then(function (subscription) {
             const userId = localStorage.getItem('userId'); // local storage에서 ID 가져오기
             if (!userId) {
                 console.error('User ID is missing in local storage');
@@ -30,7 +30,7 @@ fetch('/api/vapidPublicKey').then(response => response.text()).then(vapidPublicK
                 }
             });
         });
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.error('Service Worker registration failed:', error);
     });
 }).catch(error => {

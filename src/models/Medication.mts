@@ -1,34 +1,39 @@
 // src/models/Medication.mts
 import {
-    Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
 export class Medication {
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @ManyToOne('User', 'medications', { onDelete: 'CASCADE' })
-    user!: any;
+  @ManyToOne("User", "medications", { onDelete: "CASCADE" })
+  user!: any;
 
-    @Column()
-    name!: string;
+  @Column()
+  name!: string;
 
-    @Column()
-    dosage!: string;
+  @Column()
+  dosage!: string;
 
-    @Column()
-    frequency!: string;
+  @Column()
+  frequency!: string;
 
-    @Column({ type: "timestamp" })
-    nextAlarm!: Date;
+  @Column({ type: "timestamp" })
+  nextAlarm!: Date;
 
-    @Column({ default: true })
-    active: boolean = true;
+  @Column({ default: true })
+  active: boolean = true;
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

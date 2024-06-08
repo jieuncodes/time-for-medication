@@ -1,145 +1,151 @@
 /// tests/middlewares.test.mts ///
 
-import request from 'supertest';
-import app from '@/app.mts';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AppDataSource } from '@/data-source.mts';
-import { User } from '@/models/User.mts';
-import { Medication } from '@/models/Medication.mts';
-import { POINTS_CONFIG } from '@/middlewares/pointsMiddleware.mts';
-import config from '../src/config.mts';
+import request from "supertest";
+import app from "@/app.mts";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { AppDataSource } from "@/data-source.mts";
+import { User } from "@/models/User.mts";
+import { Medication } from "@/models/Medication.mts";
+import { POINTS_CONFIG } from "@/middlewares/pointsMiddleware.mts";
+import config from "../src/config.mts";
 
-describe('Middleware Tests', () => {
-    let token: string;
-    const testUser = {
-        email: 'middlewaretestuser@test.test',
-        username: 'middlewaretestuser',
-        password: 'Password123!',
-        fcmToken: 'fakeFcmToken123'
-    };
+describe("Middleware Tests", () => {
+  let token: string;
+  const testUser = {
+    email: "middlewaretestuser@test.test",
+    username: "middlewaretestuser",
+    password: "Password123!",
+    fcmToken: "fakeFcmToken123",
+  };
 
-    const testUser2 = {
-        email: 'middlewaretestuser2@test.test',
-        username: 'middlewaretestuser2',
-        password: 'Password123!',
-        fcmToken: 'fakeFcmToken123'
-    };
+  const testUser2 = {
+    email: "middlewaretestuser2@test.test",
+    username: "middlewaretestuser2",
+    password: "Password123!",
+    fcmToken: "fakeFcmToken123",
+  };
 
-    beforeAll(async () => {
-        await AppDataSource.initialize();
-        await request(app).post('/api/register').send(testUser);
-        const loginResponse = await request(app).post('/api/login').send(testUser);
-        token = loginResponse.body.data.accessToken;
+  beforeAll(async () => {
+    await AppDataSource.initialize();
+    await request(app).post("/api/register").send(testUser);
+    const loginResponse = await request(app).post("/api/login").send(testUser);
+    token = loginResponse.body.data.accessToken;
+  });
+
+  afterAll(async () => {
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      const users = await transactionalEntityManager.find(User, {
+        where: [{ email: testUser.email }, { email: testUser2.email }],
+        relations: ["medications"],
+      });
+
+      for (const user of users) {
+        await transactionalEntityManager.remove(User, user);
+      }
+    });
+    await AppDataSource.destroy();
+  });
+
+  describe("authenticateToken Middleware", () => {
+    test("should authenticate valid token", async () => {
+      const response = await request(app)
+        .get("/api/medications")
+        .set("Authorization", `Bearer ${token}`);
+      expect(response.status).not.toBe(401);
+      expect(response.status).not.toBe(403);
     });
 
-    afterAll(async () => {
-        await AppDataSource.transaction(async transactionalEntityManager => {
-            const users = await transactionalEntityManager.find(User, {
-                where: [{ email: testUser.email }, { email: testUser2.email }],
-                relations: ['medications']
-            });
-
-            for (const user of users) {
-                await transactionalEntityManager.remove(User, user);
-            }
-        });
-        await AppDataSource.destroy();
+    test("should fail with invalid token", async () => {
+      const response = await request(app)
+        .get("/api/medications")
+        .set("Authorization", `Bearer invalidtoken`);
+      expect(response.status).toBe(403);
     });
 
-    describe('authenticateToken Middleware', () => {
-        test('should authenticate valid token', async () => {
-            const response = await request(app)
-                .get('/api/medications')
-                .set('Authorization', `Bearer ${token}`);
-            expect(response.status).not.toBe(401);
-            expect(response.status).not.toBe(403);
-        });
+    test("should fail with no token", async () => {
+      const response = await request(app).get("/api/medications");
+      expect(response.status).toBe(401);
+    });
+  });
 
-        test('should fail with invalid token', async () => {
-            const response = await request(app)
-                .get('/api/medications')
-                .set('Authorization', `Bearer invalidtoken`);
-            expect(response.status).toBe(403);
-        });
+  describe("updatePoints Middleware", () => {
+    test("should update points on successful registration", async () => {
+      const response = await request(app).post("/api/register").send(testUser2);
+      console.log("Registration response:", response.body);
+      expect(response.status).toBe(200);
 
-        test('should fail with no token', async () => {
-            const response = await request(app)
-                .get('/api/medications');
-            expect(response.status).toBe(401);
-        });
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOneBy({ email: testUser2.email });
+      expect(user).not.toBeNull();
+      expect(user!.points).toBe(POINTS_CONFIG.REGISTER);
     });
 
-    describe('updatePoints Middleware', () => {
-        test('should update points on successful registration', async () => {
-            const response = await request(app)
-                .post('/api/register')
-                .send(testUser2);
-            console.log('Registration response:', response.body);
-            expect(response.status).toBe(200);
+    test("should update points on successful login", async () => {
+      const userRepository = AppDataSource.getRepository(User);
+      const userBeforeLogin = await userRepository.findOneBy({
+        email: testUser.email,
+      });
+      console.log("Points before login:", userBeforeLogin?.points);
 
-            const userRepository = AppDataSource.getRepository(User);
-            const user = await userRepository.findOneBy({ email: testUser2.email });
-            expect(user).not.toBeNull();
-            expect(user!.points).toBe(POINTS_CONFIG.REGISTER);
-        });
+      const response = await request(app).post("/api/login").send(testUser);
+      expect(response.status).toBe(200);
 
-        test('should update points on successful login', async () => {
-            const userRepository = AppDataSource.getRepository(User);
-            const userBeforeLogin = await userRepository.findOneBy({ email: testUser.email });
-            console.log('Points before login:', userBeforeLogin?.points);
+      const userAfterLogin = await userRepository.findOneBy({
+        email: testUser.email,
+      });
+      console.log("Points after login:", userAfterLogin?.points);
 
-            const response = await request(app)
-                .post('/api/login')
-                .send(testUser);
-            expect(response.status).toBe(200);
-
-            const userAfterLogin = await userRepository.findOneBy({ email: testUser.email });
-            console.log('Points after login:', userAfterLogin?.points);
-
-            expect(userAfterLogin).not.toBeNull();
-            expect(userAfterLogin!.points).toBe(POINTS_CONFIG.REGISTER + 2 * POINTS_CONFIG.LOGIN);
-        });
+      expect(userAfterLogin).not.toBeNull();
+      expect(userAfterLogin!.points).toBe(
+        POINTS_CONFIG.REGISTER + 2 * POINTS_CONFIG.LOGIN
+      );
     });
+  });
 });
 
-describe('Middleware - JWT Expiration', () => {
-    let expiredToken = '';
-    const testUser = {
-        email: 'expirationtestuser@test.test',
-        username: 'expirationtestuser',
-        password: 'Password123!',
-        fcmToken: 'fakeFcmToken123'
-    };
+describe("Middleware - JWT Expiration", () => {
+  let expiredToken = "";
+  const testUser = {
+    email: "expirationtestuser@test.test",
+    username: "expirationtestuser",
+    password: "Password123!",
+    fcmToken: "fakeFcmToken123",
+  };
 
-    beforeAll(async () => {
-        await AppDataSource.initialize();
-        await request(app).post('/api/register').send(testUser);
-        const loginResponse = await request(app).post('/api/login').send(testUser);
-        const tokenPayload = jwt.verify(loginResponse.body.data.accessToken, config.accessTokenSecret!) as JwtPayload;
-        tokenPayload.exp = Math.floor(Date.now() / 1000) - 30; // Set expiration to 30 seconds in the past
-        expiredToken = jwt.sign(tokenPayload, config.accessTokenSecret!);
+  beforeAll(async () => {
+    await AppDataSource.initialize();
+    await request(app).post("/api/register").send(testUser);
+    const loginResponse = await request(app).post("/api/login").send(testUser);
+    const tokenPayload = jwt.verify(
+      loginResponse.body.data.accessToken,
+      config.accessTokenSecret!
+    ) as JwtPayload;
+    tokenPayload.exp = Math.floor(Date.now() / 1000) - 30; // Set expiration to 30 seconds in the past
+    expiredToken = jwt.sign(tokenPayload, config.accessTokenSecret!);
+  });
+
+  afterAll(async () => {
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      const user = await transactionalEntityManager.findOne(User, {
+        where: { email: testUser.email },
+        relations: ["medications"],
+      });
+
+      if (user) {
+        await transactionalEntityManager.remove(Medication, user.medications);
+        await transactionalEntityManager.remove(User, user);
+      }
     });
+    await AppDataSource.destroy();
+  });
 
-    afterAll(async () => {
-        await AppDataSource.transaction(async transactionalEntityManager => {
-            const user = await transactionalEntityManager.findOne(User, {
-                where: { email: testUser.email },
-                relations: ['medications']
-            });
-
-            if (user) {
-                await transactionalEntityManager.remove(Medication, user.medications);
-                await transactionalEntityManager.remove(User, user);
-            }
-        });
-        await AppDataSource.destroy();
-    });
-
-    test('Should reject expired token', async () => {
-        const response = await request(app)
-            .get('/api/medications')
-            .set('Authorization', `Bearer ${expiredToken}`);
-        expect(response.status).toBe(401);
-        expect(response.body.message).toBe('Token has expired, please log in again.');
-    });
+  test("Should reject expired token", async () => {
+    const response = await request(app)
+      .get("/api/medications")
+      .set("Authorization", `Bearer ${expiredToken}`);
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe(
+      "Token has expired, please log in again."
+    );
+  });
 });
