@@ -1,10 +1,14 @@
 // src/models/User.mts
 import {
-  Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  BeforeInsert,
 } from "typeorm";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { Medication } from "./Medication.mts";
-import { IUser } from '../interfaces/IUser.mts';
+import { IUser } from "../interfaces/IUser.mts";
 
 @Entity()
 export class User implements IUser {
@@ -26,10 +30,12 @@ export class User implements IUser {
   @Column({ nullable: true })
   fcmToken?: string;
 
-  @Column('json', { nullable: true })
+  @Column("json", { nullable: true })
   subscription?: any;
 
-  @OneToMany(() => Medication, medication => medication.user, { cascade: ['insert', 'update', 'remove'] })
+  @OneToMany(() => Medication, (medication) => medication.user, {
+    cascade: ["insert", "update", "remove"],
+  })
   medications!: Medication[];
 
   @BeforeInsert()
