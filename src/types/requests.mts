@@ -10,6 +10,10 @@ export interface PartialUser extends Partial<IUser> {
 
 export interface AuthRequest extends Request {
     user?: PartialUser;
+}
+
+export interface PointsRequest extends Request {
+    user?: PartialUser;
     activityType?: keyof typeof POINTS_CONFIG;
 }
 

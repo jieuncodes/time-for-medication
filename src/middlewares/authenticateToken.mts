@@ -1,15 +1,12 @@
 // src/middlewares/authenticateToken.mts
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppDataSource } from '../data-source.mts';
 import { User } from '../models/User.mts';
 import { sendErrorResponse } from '../utils/response.mts';
 import config from '../config.mts';
-import { PartialUser } from '../types/requests.mts';
+import { AuthRequest } from '../types/requests.mts';
 
-interface AuthRequest extends Request {
-    user?: PartialUser;
-}
 
 export function authenticateToken(req: AuthRequest, res: Response, next: NextFunction) {
     const token = req.headers['authorization']?.split(' ')[1];
