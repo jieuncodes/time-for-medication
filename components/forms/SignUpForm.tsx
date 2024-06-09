@@ -17,8 +17,16 @@ import {
 } from "../../lib/validators/auth-validators";
 
 const SignUpForm = () => {
+  const defaultValues = {
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  };
   const form = useForm<TSignUpSchema>({
     resolver: zodResolver(SignUpSchema),
+    defaultValues,
   });
 
   const onSubmit = (values: TSignUpSchema) => {
