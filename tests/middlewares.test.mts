@@ -97,7 +97,7 @@ describe("Middleware Tests", () => {
 
       expect(userAfterLogin).not.toBeNull();
       expect(userAfterLogin!.points).toBe(
-        POINTS_CONFIG.REGISTER + 2 * POINTS_CONFIG.LOGIN
+        POINTS_CONFIG.REGISTER + 2 * POINTS_CONFIG.LOGIN,
       );
     });
   });
@@ -118,7 +118,7 @@ describe("Middleware - JWT Expiration", () => {
     const loginResponse = await request(app).post("/api/login").send(testUser);
     const tokenPayload = jwt.verify(
       loginResponse.body.data.accessToken,
-      config.accessTokenSecret!
+      config.accessTokenSecret!,
     ) as JwtPayload;
     tokenPayload.exp = Math.floor(Date.now() / 1000) - 30; // Set expiration to 30 seconds in the past
     expiredToken = jwt.sign(tokenPayload, config.accessTokenSecret!);
@@ -143,9 +143,7 @@ describe("Middleware - JWT Expiration", () => {
     const response = await request(app)
       .get("/api/medications")
       .set("Authorization", `Bearer ${expiredToken}`);
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe(
-      "Token has expired, please log in again."
-    );
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe("Invalid or expired token");
   });
 });

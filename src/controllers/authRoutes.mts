@@ -19,6 +19,7 @@ import config from "../config.mts";
 import { asyncHandler } from "../utils/asyncHandler.mts";
 
 const router = Router();
+const userRepository = AppDataSource.getRepository(User);
 
 // Utility to sign JWT
 const signToken = (userId: number): string => {
@@ -44,22 +45,14 @@ router.post(
     }
 
     const { email, password, fcmToken, username } = req.body;
-    const userRepository = AppDataSource.getRepository(User);
     const existingUser = await userRepository.findOneBy({ email });
-    if (existingUser) {
-      return sendErrorResponse(res, 400, "Email already taken");
-    }
-
     const existingUsername = await userRepository.findOneBy({ username });
-    if (existingUsername) {
-      return sendErrorResponse(res, 400, "Username already taken");
+
+    if (existingUser || existingUsername) {
+      return sendErrorResponse(res, 400, "Email or Username already taken");
     }
 
-    let user = new User();
-    user.email = email;
-    user.password = password;
-    user.fcmToken = fcmToken;
-    user.username = username;
+    const user = userRepository.create({ email, password, fcmToken, username });
     await userRepository.save(user);
 
     req.user = user;
@@ -69,7 +62,7 @@ router.post(
   updatePoints,
   (req: AuthRequest, res: Response) => {
     sendSuccessResponse(res, "User registered");
-  }
+  },
 );
 
 // POST: Login a user
@@ -83,13 +76,8 @@ router.post(
     }
 
     const { email, password, fcmToken } = req.body;
-    const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ email });
-    if (!user) {
-      return sendErrorResponse(res, 401, "Invalid credentials");
-    }
-    const passwordIsValid = await bcrypt.compare(password, user.password);
-    if (!passwordIsValid) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return sendErrorResponse(res, 401, "Invalid credentials");
     }
 
@@ -109,7 +97,7 @@ router.post(
       accessToken: req.body.token,
       userId: req.user!.id,
     });
-  }
+  },
 );
 
 // DELETE: Delete a user account
@@ -117,7 +105,6 @@ router.delete(
   "/delete-account",
   authenticateToken,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const userRepository = AppDataSource.getRepository(User);
     const result = await userRepository.delete({ id: req.user!.id });
 
     if (result.affected === 0) {
@@ -125,7 +112,7 @@ router.delete(
     }
 
     sendSuccessResponse(res, "User account deleted successfully");
-  })
+  }),
 );
 
 export default router;

@@ -25,12 +25,12 @@ export const updatePoints = asyncHandler(
 
     const pointsToAdd = POINTS_CONFIG[activityType] ?? 0;
     console.log(
-      `User ID: ${user.id}, Activity: ${activityType}, Points to Add: ${pointsToAdd}`
+      `User ID: ${user.id}, Activity: ${activityType}, Points to Add: ${pointsToAdd}`,
     );
 
     if (pointsToAdd !== 0) {
-      const userRepository = AppDataSource.getRepository(User);
       try {
+        const userRepository = AppDataSource.getRepository(User);
         const userEntity = await userRepository.findOneBy({ id: user.id });
         if (userEntity) {
           userEntity.points += pointsToAdd;
@@ -43,5 +43,5 @@ export const updatePoints = asyncHandler(
     }
 
     next();
-  }
+  },
 );

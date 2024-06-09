@@ -7,8 +7,12 @@ export function errorHandler(
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
-  console.error(err.stack);
+  console.error("Error details:", {
+    message: err.message,
+    stack: err.stack,
+    name: err.name,
+  });
   sendErrorResponse(res, 500, "Internal Server Error");
 }
