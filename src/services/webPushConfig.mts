@@ -6,7 +6,7 @@ import config from "../config.mts";
 webPush.setVapidDetails(
   "mailto:tedigom52@gmail.com",
   config.vapidPublicKey!,
-  config.vapidPrivateKey!
+  config.vapidPrivateKey!,
 );
 
 export default webPush;

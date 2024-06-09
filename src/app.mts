@@ -27,7 +27,7 @@ app.use(
       frameSrc: ["'self'", "https://www.youtube.com"], //need to edit
     },
     reportOnly: config.nodeEnv !== "production", // Report-only mode in non-production environments
-  })
+  }),
 );
 
 app.use(
@@ -35,7 +35,7 @@ app.use(
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true,
-  })
+  }),
 );
 
 app.use(helmet.hidePoweredBy());
@@ -48,7 +48,7 @@ app.use(
   cors({
     origin: config.allowedOrigins,
     optionsSuccessStatus: 200,
-  })
+  }),
 );
 
 app.use(cookieParser());
