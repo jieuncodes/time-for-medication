@@ -57,6 +57,7 @@ const SignUpForm = () => {
 
   const onSubmit = (values: TSignUpSchema) => {
     console.log(values);
+    
   };
 
   return (
