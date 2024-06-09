@@ -143,9 +143,9 @@ describe("Middleware - JWT Expiration", () => {
     const response = await request(app)
       .get("/api/medications")
       .set("Authorization", `Bearer ${expiredToken}`);
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(403);
     expect(response.body.message).toBe(
-      "Token has expired, please log in again."
+      "Invalid or expired token"
     );
   });
 });

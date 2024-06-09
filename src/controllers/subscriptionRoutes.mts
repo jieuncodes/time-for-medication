@@ -8,6 +8,7 @@ import { asyncHandler } from "../utils/asyncHandler.mts";
 import { sendErrorResponse, sendSuccessResponse } from "../utils/response.mts";
 
 const router = Router();
+const userRepository = AppDataSource.getRepository(User);
 
 router.post(
   "/save-subscription",
@@ -24,7 +25,6 @@ router.post(
 
     const { userId, subscription } = req.body;
 
-    const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ id: userId });
 
     if (!user) {
@@ -34,7 +34,7 @@ router.post(
     user.subscription = subscription;
     await userRepository.save(user);
     return sendSuccessResponse(res, "Subscription saved successfully");
-  })
+  }),
 );
 
 export default router;
