@@ -1,6 +1,6 @@
 // src/types/express/index.d.ts
-import { IUser } from "../../interfaces/IUser.mts";
-import { POINTS_CONFIG } from "../../middlewares/pointsMiddleware.mts";
+import { IUser } from "../../interfaces/IUser.ts";
+import { POINTS_CONFIG } from "../../middlewares/pointsMiddleware.ts";
 
 declare module "express-serve-static-core" {
   interface Request {

@@ -1,11 +1,11 @@
 // src/middlewares/authenticateToken.mts
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AppDataSource } from "../data-source.mts";
-import { User } from "../models/User.mts";
-import { sendErrorResponse } from "../utils/response.mts";
-import config from "../config.mts";
-import { AuthRequest } from "../types/requests.mts";
+import { AppDataSource } from "../data-source.ts";
+import { User } from "../models/User.ts";
+import { sendErrorResponse } from "../utils/response.ts";
+import config from "../config.ts";
+import { AuthRequest } from "../types/requests.ts";
 
 const verifyToken = (token: string): Promise<any> =>
   new Promise((resolve, reject) => {

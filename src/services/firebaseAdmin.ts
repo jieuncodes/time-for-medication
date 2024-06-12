@@ -1,6 +1,6 @@
 // src/services/firebaseAdmin.mts
 import admin from "firebase-admin";
-import config from "../config.mts";
+import config from "../config.ts";
 
 // Firebase Admin SDK 초기화
 if (!admin.apps.length) {

@@ -1,7 +1,7 @@
 import { DataSourceOptions } from "typeorm";
-import { User } from "./src/models/User.mts";
-import { Medication } from "./src/models/Medication.mts";
-import config from "./src/config.mts";
+import { User } from "./src/models/User.ts";
+import { Medication } from "./src/models/Medication.ts";
+import config from "./src/config.ts";
 
 const dataSourceOptions: DataSourceOptions = {
   type: "postgres",

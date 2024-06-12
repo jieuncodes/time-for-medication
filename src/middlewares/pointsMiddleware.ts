@@ -1,11 +1,11 @@
 // src/middlewares/pointsMiddleware.mts
 
 import { Response, NextFunction } from "express";
-import { AppDataSource } from "../data-source.mts";
-import { User } from "../models/User.mts";
-import { PointsRequest } from "../types/requests.mts";
-import { asyncHandler } from "../utils/asyncHandler.mts";
-import config from "../config.mts";
+import { AppDataSource } from "../data-source.ts";
+import { User } from "../models/User.ts";
+import { PointsRequest } from "../types/requests.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
+import config from "../config.ts";
 
 export const POINTS_CONFIG = {
   REGISTER: config.pointsRegister,

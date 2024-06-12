@@ -1,22 +1,22 @@
 // src/controllers/authRoutes.mts
 import { Router, Response, NextFunction } from "express";
-import { AuthRequest } from "../types/requests.mts";
-import { AppDataSource } from "../data-source.mts";
-import { User } from "../models/User.mts";
+import { AuthRequest } from "../types/requests.ts";
+import { AppDataSource } from "../data-source.ts";
+import { User } from "../models/User.ts";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { updatePoints } from "../middlewares/pointsMiddleware.mts";
-import { sendErrorResponse, sendSuccessResponse } from "../utils/response.mts";
+import { updatePoints } from "../middlewares/pointsMiddleware.ts";
+import { sendErrorResponse, sendSuccessResponse } from "../utils/response.ts";
 import {
   emailValidation,
   passwordValidation,
   fcmTokenValidation,
   usernameValidation,
-} from "../utils/validation.mts";
-import { authenticateToken } from "../middlewares/authenticateToken.mts";
-import config from "../config.mts";
-import { asyncHandler } from "../utils/asyncHandler.mts";
+} from "../utils/validation.ts";
+import { authenticateToken } from "../middlewares/authenticateToken.ts";
+import config from "../config.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
 
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);

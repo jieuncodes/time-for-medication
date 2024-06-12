@@ -1,17 +1,17 @@
 // src/routes/medicationRoutes.mts
 import { Router, Response } from "express";
 import { validationResult } from "express-validator";
-import { AppDataSource } from "../data-source.mts";
-import { Medication } from "../models/Medication.mts";
-import { authenticateToken } from "../middlewares/authenticateToken.mts";
-import { updatePoints } from "../middlewares/pointsMiddleware.mts";
-import { sendErrorResponse, sendSuccessResponse } from "../utils/response.mts";
+import { AppDataSource } from "../data-source.ts";
+import { Medication } from "../models/Medication.ts";
+import { authenticateToken } from "../middlewares/authenticateToken.ts";
+import { updatePoints } from "../middlewares/pointsMiddleware.ts";
+import { sendErrorResponse, sendSuccessResponse } from "../utils/response.ts";
 import {
   idParamValidation,
   medicationValidation,
-} from "../utils/validation.mts";
-import { MedicationRequest } from "../types/requests.mts";
-import { asyncHandler } from "../utils/asyncHandler.mts";
+} from "../utils/validation.ts";
+import { MedicationRequest } from "../types/requests.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
 
 const router = Router();
 const medicationRepository = AppDataSource.getRepository(Medication);

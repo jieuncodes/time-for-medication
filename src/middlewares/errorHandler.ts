@@ -1,7 +1,7 @@
 // src/middlewares/errorHandler.mts
 
 import { Request, Response, NextFunction } from "express";
-import { sendErrorResponse } from "../utils/response.mts";
+import { sendErrorResponse } from "../utils/response.ts";
 
 export function errorHandler(
   err: any,
