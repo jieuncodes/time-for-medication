@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 
-import { AppDataSource } from "@/data-source.ts";
+import { AppDataSource } from "./data-source.ts";
 import authRoutes from "./routers/authRoutes.ts";
 import medicationRoutes from "./routers/medicationRoutes.ts";
 import subscriptionRoutes from "./routers/subscriptionRoutes.ts";

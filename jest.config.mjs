@@ -25,7 +25,7 @@ const jestConfig = {
   coveragePathIgnorePatterns: ['/node_modules/', '/tests/'],
   reporters: ['default'],
   testTimeout: 30000,
-  verbose: true,
+  verbose: true
 };
 
 export default jestConfig;

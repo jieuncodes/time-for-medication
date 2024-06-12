@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 console.log(`Loading environment variables from .env.${process.env.NODE_ENV}`);
 dotenv.config({
-  path: path.resolve(__dirname, `../.env.${process.env.NODE_ENV}`),
+  path: path.resolve(__dirname, `../../.env.${process.env.NODE_ENV}`),
 });
 
 const requiredEnvVariables = [

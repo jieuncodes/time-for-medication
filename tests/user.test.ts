@@ -1,6 +1,6 @@
 //tests/user.test.mts
 
-import { User } from "@/models/User.ts";
+import { User } from "../server/src/models/User.ts";
 import bcrypt from "bcrypt";
 
 describe("User Entity", () => {

@@ -1,13 +1,13 @@
 /// tests/middlewares.test.mts ///
 
 import request from "supertest";
-import app from "@/app.ts";
+import app from "../server/src/app.ts";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { AppDataSource } from "@/data-source.ts";
-import { User } from "@/models/User.ts";
-import { Medication } from "@/models/Medication.ts";
-import { POINTS_CONFIG } from "@/middlewares/pointsMiddleware.ts";
-import config from "../src/config.ts";
+import { AppDataSource } from "../server/src/data-source.ts";
+import { User } from "../server/src/models/User.ts";
+import { Medication } from "../server/src/models/Medication.ts";
+import { POINTS_CONFIG } from "../server/src/middlewares/pointsMiddleware.ts";
+import config from "../server/src/config.ts";
 
 describe("Middleware Tests", () => {
   let token: string;

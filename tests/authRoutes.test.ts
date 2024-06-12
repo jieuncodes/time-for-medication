@@ -1,9 +1,9 @@
 // tests/authRoutes.test.mts
 import request from "supertest";
-import app from "@/app.ts";
-import { AppDataSource } from "@/data-source.ts";
-import { User } from "@/models/User.ts";
-import { Medication } from "@/models/Medication.ts";
+import app from "../server/src/app.ts";
+import { AppDataSource } from "../server/src/data-source.ts";
+import { User } from "../server/src/models/User.ts";
+import { Medication } from "../server/src/models/Medication.ts";
 
 describe("Authentication Routes", () => {
   beforeAll(async () => {
