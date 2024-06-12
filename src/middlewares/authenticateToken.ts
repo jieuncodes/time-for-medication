@@ -1,4 +1,4 @@
-// src/middlewares/authenticateToken.mts
+// src/middlewares/authenticateToken.ts
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppDataSource } from "../data-source.ts";

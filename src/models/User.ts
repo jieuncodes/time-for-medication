@@ -1,4 +1,4 @@
-// src/models/User.mts
+// src/models/User.ts
 import {
   Entity,
   PrimaryGeneratedColumn,

@@ -6,10 +6,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 
-import { AppDataSource } from "./data-source.ts";
-import authRoutes from "./controllers/authRoutes.ts";
-import medicationRoutes from "./controllers/medicationRoutes.ts";
-import subscriptionRoutes from "./controllers/subscriptionRoutes.ts";
+import { AppDataSource } from "@/data-source.ts";
+import authRoutes from "./routers/authRoutes.ts";
+import medicationRoutes from "./routers/medicationRoutes.ts";
+import subscriptionRoutes from "./routers/subscriptionRoutes.ts";
 import config from "./config.ts";
 import { errorHandler } from "./middlewares/errorHandler.ts";
 import { sendErrorResponse } from "./utils/response.ts";

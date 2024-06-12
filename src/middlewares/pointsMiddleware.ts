@@ -1,4 +1,4 @@
-// src/middlewares/pointsMiddleware.mts
+// src/middlewares/pointsMiddleware.ts
 
 import { Response, NextFunction } from "express";
 import { AppDataSource } from "../data-source.ts";

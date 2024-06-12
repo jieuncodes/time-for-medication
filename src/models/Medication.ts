@@ -1,4 +1,4 @@
-// src/models/Medication.mts
+// src/models/Medication.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
