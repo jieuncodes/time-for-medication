@@ -5,13 +5,14 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import { AppDataSource } from "./data-source.mts";
-import authRoutes from "./controllers/authRoutes.mts";
-import medicationRoutes from "./controllers/medicationRoutes.mts";
-import subscriptionRoutes from "./controllers/subscriptionRoutes.mts";
-import config from "./config.mts";
-import { errorHandler } from "./middlewares/errorHandler.mts";
-import { sendErrorResponse } from "./utils/response.mts";
+
+import { AppDataSource } from "./data-source.ts";
+import authRoutes from "./routers/authRoutes.ts";
+import medicationRoutes from "./routers/medicationRoutes.ts";
+import subscriptionRoutes from "./routers/subscriptionRoutes.ts";
+import config from "./config.ts";
+import { errorHandler } from "./middlewares/errorHandler.ts";
+import { sendErrorResponse } from "./utils/response.ts";
 
 const app = express();
 

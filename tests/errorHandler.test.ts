@@ -1,6 +1,6 @@
 // tests/errorHandler.test.mts
 import request from "supertest";
-import app from "@/app.mts";
+import app from "../server/src/app.ts";
 
 describe("Global Error Handler", () => {
   test("should handle errors in routes", async () => {

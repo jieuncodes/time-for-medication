@@ -1,4 +1,4 @@
-// src/models/User.mts
+// src/models/User.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,8 +7,8 @@ import {
   BeforeInsert,
 } from "typeorm";
 import bcrypt from "bcrypt";
-import { Medication } from "./Medication.mts";
-import { IUser } from "../interfaces/IUser.mts";
+import { Medication } from "./Medication.ts";
+import { IUser } from "../interfaces/IUser.ts";
 
 @Entity()
 export class User implements IUser {

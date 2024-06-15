@@ -11,13 +11,13 @@ const jestConfig = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
-  testMatch: ["**/tests/**/*.test.mts"],
+  testMatch: ["**/tests/**/*.test.ts"],
   transform: {
     '^.+\\.(ts|tsx|mts)$': ['ts-jest', { useESM: true }],
   },
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/' }),
-  setupFilesAfterEnv: ['./jest.setup.mts'],
-  extensionsToTreatAsEsm: ['.mts'],
+  setupFilesAfterEnv: ['./jest.setup.ts'],
+  extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'mts', 'mjs', 'js', 'jsx', 'json', 'node'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
@@ -25,7 +25,7 @@ const jestConfig = {
   coveragePathIgnorePatterns: ['/node_modules/', '/tests/'],
   reporters: ['default'],
   testTimeout: 30000,
-  verbose: true,
+  verbose: true
 };
 
 export default jestConfig;

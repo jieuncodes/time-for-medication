@@ -1,6 +1,6 @@
 // src/data-source.mts
 import { DataSource } from "typeorm";
-import dataSourceOptions from "../ormconfig.mts";
+import dataSourceOptions from "../../ormconfig.ts";
 
 export const AppDataSource = new DataSource(dataSourceOptions);
 

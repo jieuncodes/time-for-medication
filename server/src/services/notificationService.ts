@@ -1,7 +1,7 @@
 // src/services/notificationService.mts
-import webPush from "./webPushConfig.mts";
-import admin from "./firebaseAdmin.mts";
-import { IUser } from "../interfaces/IUser.mts";
+import webPush from "./webPushConfig.ts";
+import admin from "./firebaseAdmin.ts";
+import { IUser } from "../interfaces/IUser.ts";
 
 class NotificationService {
   async sendWebPushNotification(subscription: any, payload: any) {

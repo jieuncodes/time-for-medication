@@ -1,6 +1,6 @@
 // src/services/webPushConfig.mts
 import webPush from "web-push";
-import config from "../config.mts";
+import config from "../config.ts";
 
 // VAPID 키 설정 (web-push)
 webPush.setVapidDetails(

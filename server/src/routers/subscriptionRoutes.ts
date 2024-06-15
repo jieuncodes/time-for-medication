@@ -1,11 +1,11 @@
 // src/controllers/subscriptionRoutes.mts
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import { AppDataSource } from "../data-source.mts";
-import { User } from "../models/User.mts";
-import { SubscriptionRequest } from "../types/requests.mts";
-import { asyncHandler } from "../utils/asyncHandler.mts";
-import { sendErrorResponse, sendSuccessResponse } from "../utils/response.mts";
+import { AppDataSource } from "../data-source.ts";
+import { User } from "../models/User.ts";
+import { SubscriptionRequest } from "../types/requests.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
+import { sendErrorResponse, sendSuccessResponse } from "../utils/response.ts";
 
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);
