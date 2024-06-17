@@ -29,10 +29,29 @@ const SignUpForm = () => {
     defaultValues,
   });
 
-  const onSubmit = (values: TSignUpSchema) => {
-    console.log("Form submitted:", values);
-  };
+  const onSubmit = async (values: TSignUpSchema) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+        }),
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to register");
+      }
+
+      const data = await response.json();
+      console.log("Form submitted:", data);
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
+  };
   const onError = (errors: any) => {
     console.log("Form errors:", errors);
   };
