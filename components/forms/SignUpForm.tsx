@@ -15,8 +15,11 @@ import {
   SignUpSchema,
   TSignUpSchema,
 } from "../../lib/validators/auth-validators";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+  const router = useRouter();
+
   const defaultValues = {
     username: "",
     email: "",
@@ -31,8 +34,8 @@ const SignUpForm = () => {
 
   const onSubmit = async (values: TSignUpSchema) => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
-      const response = await fetch(apiUrl, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await fetch(`${apiUrl}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,12 +49,12 @@ const SignUpForm = () => {
         throw new Error("Failed to register");
       }
 
-      const data = await response.json();
-      console.log("Form submitted:", data);
+      router.push("/");
     } catch (error) {
       console.error("Form submission error:", error);
     }
   };
+
   const onError = (errors: any) => {
     console.log("Form errors:", errors);
   };
