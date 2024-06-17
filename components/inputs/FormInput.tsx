@@ -14,6 +14,7 @@ interface FormInputProps<T extends FieldValues> {
   placeholder?: string;
   label?: string;
   moreStyles?: string;
+  type?: string;
 }
 
 const FormInput = <T extends FieldValues>({
@@ -22,6 +23,7 @@ const FormInput = <T extends FieldValues>({
   placeholder,
   label,
   moreStyles,
+  type = "text",
 }: FormInputProps<T>) => {
   return (
     <FormField
@@ -32,7 +34,7 @@ const FormInput = <T extends FieldValues>({
           <FormControl>
             <>
               {label && <Label htmlFor={name}>{label}</Label>}
-              <StyledInput placeholder={placeholder} {...field} />
+              <StyledInput placeholder={placeholder} {...field} type={type} />
             </>
           </FormControl>
           <FormMessage />

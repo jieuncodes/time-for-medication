@@ -18,44 +18,49 @@ import {
 
 const SignUpForm = () => {
   const defaultValues = {
-    name: "",
     username: "",
     email: "",
     password: "",
     passwordConfirm: "",
   };
+
   const form = useForm<TSignUpSchema>({
     resolver: zodResolver(SignUpSchema),
     defaultValues,
   });
 
   const onSubmit = (values: TSignUpSchema) => {
-    console.log(values);
+    console.log("Form submitted:", values);
+  };
+
+  const onError = (errors: any) => {
+    console.log("Form errors:", errors);
   };
 
   return (
     <FormContainer>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <ColForms>
-            <FormInput name="name" form={form} label="Name" />
             <FormInput name="username" form={form} label="Username" />
             <FormInput name="email" form={form} label="Email" />
             <FormInput
               name="password"
               form={form}
-              placeholder="6+ charaters"
+              placeholder="6+ characters"
               label="Password"
+              type="password"
             />
             <FormInput
               name="passwordConfirm"
               form={form}
               placeholder="Confirm Password"
               moreStyles={`-mt-3`}
+              type="password"
             />
           </ColForms>
 
-          <LoginButton>Create Account</LoginButton>
+          <LoginButton type="submit">Create Account</LoginButton>
 
           <Options>
             {`Already have an account?`}
