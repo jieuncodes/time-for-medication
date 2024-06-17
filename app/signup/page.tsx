@@ -1,5 +1,6 @@
+"use client"
 import tw from "tailwind-styled-components";
-
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { RoundButton } from "components/button/RoundButton";
 import { Content, Divider, LinkText, Title } from "components/common";
@@ -9,7 +10,7 @@ export default function signUp() {
   return (
     <Content className="h-full">
       <Title>Sign up to MedTime</Title>
-      <StyledGoogleBtn>
+      <StyledGoogleBtn onClick={() => signIn('google')}>
         <Image
           src="/images/google.png"
           alt="Google Icon"
