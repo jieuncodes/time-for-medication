@@ -1,6 +1,5 @@
 "use client";
 
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import FormInput from "components/inputs/FormInput";
@@ -12,58 +11,78 @@ import {
   Options,
   LoginButton,
 } from "./SignUpForm.styles";
+import {
+  SignUpSchema,
+  TSignUpSchema,
+} from "../../lib/validators/auth-validators";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
-  const formSchema = z
-    .object({
-      name: z.string({ required_error: "Name is required." }),
-      username: z.string({ required_error: "Username is required." }),
-      email: z
-        .string({ required_error: "Email is required." })
-        .email({ message: "Not a valid email address." }),
-      password: z
-        .string({ required_error: "Password is required." })
-        .min(8, { message: "Password must be at least 8 characters long." }),
-      passwordConfirm: z.string({
-        required_error: "Password confirmation is required.",
-      }),
-    })
-    .refine((data) => data.password === data.passwordConfirm, {
-      message: "Passwords do not match.",
-      path: ["passwordConfirm"],
-    });
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const defaultValues = {
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  };
+
+  const form = useForm<TSignUpSchema>({
+    resolver: zodResolver(SignUpSchema),
+    defaultValues,
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: TSignUpSchema) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await fetch(`${apiUrl}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to register");
+      }
+
+      router.push("/");
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
+  };
+
+  const onError = (errors: any) => {
+    console.log("Form errors:", errors);
   };
 
   return (
     <FormContainer>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <ColForms>
-            <FormInput name="name" form={form} label="Name" />
             <FormInput name="username" form={form} label="Username" />
             <FormInput name="email" form={form} label="Email" />
             <FormInput
               name="password"
               form={form}
-              placeholder="6+ charaters"
+              placeholder="6+ characters"
               label="Password"
+              type="password"
             />
             <FormInput
               name="passwordConfirm"
               form={form}
               placeholder="Confirm Password"
               moreStyles={`-mt-3`}
+              type="password"
             />
           </ColForms>
 
-          <LoginButton>Create Account</LoginButton>
+          <LoginButton type="submit">Create Account</LoginButton>
 
           <Options>
             {`Already have an account?`}
