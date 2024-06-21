@@ -77,7 +77,10 @@ router.post(
 
     const { email, password, fcmToken } = req.body;
     const user = await userRepository.findOneBy({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return sendErrorResponse(res, 401, "User not found");
+    }
+    if (password && !(await bcrypt.compare(password, user.password || ""))) {
       return sendErrorResponse(res, 401, "Invalid credentials");
     }
 
@@ -89,6 +92,33 @@ router.post(
     req.user = user;
     req.body.token = signToken(user.id);
     req.activityType = "LOGIN";
+    next();
+  }),
+  updatePoints,
+  (req: AuthRequest, res: Response) => {
+    sendSuccessResponse(res, {
+      accessToken: req.body.token,
+      userId: req.user!.id,
+    });
+  },
+);
+
+// POST: OAuth
+router.post(
+  "/oauth",
+  asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const { email, username, fcmToken, provider } = req.body;
+    let isNew = false;
+    let user = await userRepository.findOneBy({ email });
+    if (!user) {
+      user = userRepository.create({ email, fcmToken, username, provider });
+      await userRepository.save(user);
+      isNew = true;
+    }
+
+    req.user = user;
+    req.body.token = signToken(user.id);
+    req.activityType = isNew ? "REGISTER" : "LOGIN";
     next();
   }),
   updatePoints,
