@@ -22,30 +22,20 @@ export const updatePoints = asyncHandler(
     if (!user?.id || !activityType) {
       return next();
     }
-    const userRepository = AppDataSource.getRepository(User);
-    const userEntity = await userRepository.findOneBy({ id: user.id });
 
     const pointsToAdd = POINTS_CONFIG[activityType] ?? 0;
-
-    if (
-      activityType === "LOGIN" &&
-      userEntity?.lastLoginDate === userEntity?.lastLoginPoint
-    ) {
-      console.log("login points already given today");
-      return next();
-    }
-
     console.log(
       `User ID: ${user.id}, Activity: ${activityType}, Points to Add: ${pointsToAdd}`,
     );
 
-    if (pointsToAdd !== 0 && userEntity) {
-      if (activityType === "LOGIN") {
-        userEntity.lastLoginPoint = new Date();
-      }
-      userEntity.points += pointsToAdd;
+    if (pointsToAdd !== 0) {
       try {
-        await userRepository.save(userEntity);
+        const userRepository = AppDataSource.getRepository(User);
+        const userEntity = await userRepository.findOneBy({ id: user.id });
+        if (userEntity) {
+          userEntity.points += pointsToAdd;
+          await userRepository.save(userEntity);
+        }
       } catch (error) {
         console.error("Error updating user points:", error);
         return next(error);

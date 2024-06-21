@@ -24,9 +24,7 @@ export const passwordValidation = [
       minNumbers: 1,
       minSymbols: 1,
     })
-    .withMessage(
-      "Password must be strong enough to meet the required criteria.",
-    )
+    .withMessage("Password must meet the strength requirements")
     .isLength({ min: 8, max: 100 })
     .withMessage("Password must be between 8 and 100 characters long"),
 ];
