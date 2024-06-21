@@ -53,6 +53,7 @@ router.post(
     }
 
     const user = userRepository.create({ email, password, fcmToken, username });
+    user.registerDate = new Date();
     await userRepository.save(user);
 
     req.user = user;
@@ -86,8 +87,10 @@ router.post(
 
     if (fcmToken) {
       user.fcmToken = fcmToken;
-      await userRepository.save(user);
     }
+
+    user.lastLoginDate = new Date();
+    await userRepository.save(user);
 
     req.user = user;
     req.body.token = signToken(user.id);
