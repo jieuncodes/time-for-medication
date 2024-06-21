@@ -1,4 +1,3 @@
-// src/models/User.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -33,19 +32,17 @@ export class User implements IUser {
   @Column("json", { nullable: true })
   subscription?: any;
 
-
   @Column({ nullable: true })
-  provider!: string;
+  provider?: string;
 
   @Column({ type: "date", nullable: true })
-  lastLoginDate!: Date | null;
+  lastLoginDate?: Date | null;
 
   @Column({ type: "date" })
   registerDate!: Date;
 
   @Column({ type: "date", nullable: true })
-  lastLoginPoint!: Date | null;
-
+  lastLoginPoint?: Date | null;
 
   @OneToMany(() => Medication, (medication) => medication.user, {
     cascade: ["insert", "update", "remove"],
