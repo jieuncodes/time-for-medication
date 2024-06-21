@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development concurrently \"next dev\" \"node --import ./scripts/register-ts-node.mjs server/src/app.ts\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"cd client && next dev\" \"node --import ./scripts/register-ts-node.mjs server/src/app.ts\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
