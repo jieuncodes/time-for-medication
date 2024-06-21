@@ -10,10 +10,8 @@
 /coverage
 
 # next.js
-/client/.next/
-.next/
+/.next/
 /out/
-
 
 # production
 /build
@@ -29,7 +27,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env*
 
 # vercel
 .vercel
@@ -37,12 +34,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-
-#임시용
-directory_structure.txt
-merge_files.py
-merged_code.txt
-
-*storybook.log
-error.log
