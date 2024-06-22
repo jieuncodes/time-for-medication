@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitErrorHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import { LinkText } from '@/components/common';
@@ -15,10 +15,11 @@ import {
   SignUpSchema,
   TSignUpSchema,
 } from '../../lib/validators/auth-validators';
-import { useEffect, useState } from 'react';
 import Error, { ErrorProps } from 'next/error';
+import { useRouter } from 'next/navigation';
 
 const SignUpForm = () => {
+  const router = useRouter();
   const defaultValues = {
     username: '',
     email: '',
@@ -61,19 +62,17 @@ const SignUpForm = () => {
       }
 
       console.info('Registration successful');
+
+      router.push('/login');
     } catch (error) {
       console.error('Form submission error:', error);
     }
   };
 
-  const onError: SubmitErrorHandler<TSignUpSchema> = (errors) => {
-    console.log('Form errors:', errors);
-  };
-
   return (
     <FormContainer>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <ColForms>
             <FormInput name="username" form={form} label="Username" />
             <FormInput name="email" form={form} label="Email" />

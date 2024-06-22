@@ -48,7 +48,9 @@ export default FormInput;
 
 const StyledInput = tw(Input)`
   text-md
+  user-select-none
   h-12
+  select-none
   rounded-xl
   border
   border-gray-300
