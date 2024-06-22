@@ -10,8 +10,12 @@ import { RoundButton } from '@/components/button/RoundButton';
 import { LoginSchema, TLoginSchema } from '@/lib/validators/auth-validators';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import LoadingSpinner from '../icons/LoadingSpinner';
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const form = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
@@ -19,6 +23,8 @@ const LoginForm = () => {
 
   const onSubmit = async (values: TLoginSchema) => {
     try {
+      setLoading(true);
+
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       const response = await fetch(`${apiUrl}/api/login`, {
@@ -34,6 +40,8 @@ const LoginForm = () => {
       console.log('response', response);
       if (!response.ok) {
         toast.error('Wrong email or password');
+        setLoading(false);
+        return;
       }
 
       const res = await response.json();
@@ -42,6 +50,7 @@ const LoginForm = () => {
       router.push('/');
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -49,12 +58,18 @@ const LoginForm = () => {
     <FormContainer>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormInput name="email" form={form} placeholder="Email" />
+          <FormInput
+            name="email"
+            form={form}
+            placeholder="Email"
+            disabled={loading}
+          />
           <FormInput
             name="password"
             form={form}
             placeholder="Password"
             type="password"
+            disabled={loading}
           />
           <Options>
             <RememberMe>
@@ -64,7 +79,10 @@ const LoginForm = () => {
             <ForgotPassword>Forgot password?</ForgotPassword>
           </Options>
 
-          <LoginButton>Log In</LoginButton>
+          <LoginButton type="submit" disabled={loading}>
+            {loading && <LoadingSpinner />}
+            Log In
+          </LoginButton>
         </form>
       </Form>
     </FormContainer>
