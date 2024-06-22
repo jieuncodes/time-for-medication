@@ -12,11 +12,16 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
+import useSessionStorage from '@/hooks/useSessionStorage';
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const [_, setSessionToken] = useSessionStorage({
+    key: 'token',
+  });
+
   const form = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
@@ -44,7 +49,7 @@ const LoginForm = () => {
       }
 
       const res = await response.json();
-      sessionStorage.setItem('token', res.data.accessToken);
+      setSessionToken(res.data.accessToken);
 
       router.push('/');
     } catch (error) {
