@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { SubmitErrorHandler, useForm } from 'react-hook-form';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import { LinkText } from '@/components/common';
@@ -15,10 +15,11 @@ import {
   SignUpSchema,
   TSignUpSchema,
 } from '../../lib/validators/auth-validators';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Error, { ErrorProps } from 'next/error';
 
 const SignUpForm = () => {
-  const router = useRouter();
+  const [serverErrorMsg, setServerErrorMsg] = useState<string | null>(null);
 
   const defaultValues = {
     username: '',
@@ -32,9 +33,15 @@ const SignUpForm = () => {
     defaultValues,
   });
 
+  //debug
+  useEffect(() => {
+    console.log('serverErrorMsg', serverErrorMsg);
+  }, [serverErrorMsg]);
+
   const onSubmit = async (values: TSignUpSchema) => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
       const response = await fetch(`${apiUrl}/api/register`, {
         method: 'POST',
         headers: {
@@ -46,16 +53,25 @@ const SignUpForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to register');
+        const errorData = await response.json();
+        setServerErrorMsg(errorData.message);
+
+        const registrationError: ErrorProps = {
+          statusCode: response.status,
+          title: 'Registration Error',
+        };
+
+        throw registrationError;
       }
 
-      router.push('/');
+      console.info('Registration successful');
+      setServerErrorMsg(null);
     } catch (error) {
       console.error('Form submission error:', error);
     }
   };
 
-  const onError = (errors: any) => {
+  const onError: SubmitErrorHandler<TSignUpSchema> = (errors) => {
     console.log('Form errors:', errors);
   };
 

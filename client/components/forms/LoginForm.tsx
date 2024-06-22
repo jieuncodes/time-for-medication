@@ -1,33 +1,20 @@
 'use client';
 
 import tw from 'tailwind-styled-components';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Checkbox } from '@/components/ui/checkbox';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import { RoundButton } from '@/components/button/RoundButton';
+import { LoginSchema, TLoginSchema } from '@/lib/validators/auth-validators';
 
 const LoginForm = () => {
-  const formSchema = z.object({
-    email: z.string({ required_error: 'Email is required.' }).email({
-      message: 'Not a valid email address.',
-    }),
-    password: z
-      .string({
-        required_error: 'Password is required.',
-      })
-      .min(8, {
-        message: 'Password must be at least 8 characters long.',
-      }),
+  const form = useForm<TLoginSchema>({
+    resolver: zodResolver(LoginSchema),
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: TLoginSchema) => {
     console.log(values);
   };
 
