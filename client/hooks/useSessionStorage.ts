@@ -24,7 +24,7 @@ const useSessionStorage = ({
   const [storedValue, setStoredValue] = useState<string>(readValue);
 
   const setValue = (value: string) => {
-    if (typeof window == 'undefined') {
+    if (typeof window === 'undefined') {
       console.warn(
         `Tried setting sessionStorage key “${key}” even though environment is not a client`
       );
@@ -38,7 +38,22 @@ const useSessionStorage = ({
     }
   };
 
-  return [storedValue, setValue] as const;
+  const clearValue = () => {
+    if (typeof window === 'undefined') {
+      console.warn(
+        `Tried removing sessionStorage key “${key}” even though environment is not a client`
+      );
+    }
+
+    try {
+      setStoredValue(initialValue);
+      window.sessionStorage.removeItem(key);
+    } catch (error) {
+      console.warn(`Error removing sessionStorage key “${key}”:`, error);
+    }
+  };
+
+  return { storedValue, setValue, clearValue };
 };
 
 export default useSessionStorage;

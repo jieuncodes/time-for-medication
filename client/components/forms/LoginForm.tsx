@@ -18,7 +18,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const [_, setSessionToken] = useSessionStorage({
+  const { setValue: setSessionToken } = useSessionStorage({
     key: 'token',
   });
 
