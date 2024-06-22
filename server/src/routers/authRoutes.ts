@@ -45,11 +45,15 @@ router.post(
     }
 
     const { email, password, fcmToken, username } = req.body;
-    const existingUser = await userRepository.findOneBy({ email });
+    const existingEmail = await userRepository.findOneBy({ email });
     const existingUsername = await userRepository.findOneBy({ username });
 
-    if (existingUser || existingUsername) {
-      return sendErrorResponse(res, 400, "Email or Username already taken");
+    if (existingEmail) {
+      return sendErrorResponse(res, 400, "Email already taken");
+    }
+
+    if (existingUsername) {
+      return sendErrorResponse(res, 400, "Username already taken");
     }
 
     const user = userRepository.create({ email, password, fcmToken, username });
@@ -63,7 +67,7 @@ router.post(
   updatePoints,
   (req: AuthRequest, res: Response) => {
     sendSuccessResponse(res, "User registered");
-  },
+  }
 );
 
 // POST: Login a user
@@ -103,7 +107,7 @@ router.post(
       accessToken: req.body.token,
       userId: req.user!.id,
     });
-  },
+  }
 );
 
 // POST: OAuth
@@ -130,7 +134,7 @@ router.post(
       accessToken: req.body.token,
       userId: req.user!.id,
     });
-  },
+  }
 );
 
 // DELETE: Delete a user account
@@ -145,7 +149,7 @@ router.delete(
     }
 
     sendSuccessResponse(res, "User account deleted successfully");
-  }),
+  })
 );
 
 export default router;
