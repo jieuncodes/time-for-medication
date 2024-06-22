@@ -37,7 +37,6 @@ const LoginForm = () => {
         }),
       });
 
-      console.log('response', response);
       if (!response.ok) {
         toast.error('Wrong email or password');
         setLoading(false);

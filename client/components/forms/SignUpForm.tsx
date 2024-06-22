@@ -15,7 +15,6 @@ import {
   SignUpSchema,
   TSignUpSchema,
 } from '../../lib/validators/auth-validators';
-import { ErrorProps } from 'next/error';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
