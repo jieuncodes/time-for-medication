@@ -8,6 +8,7 @@ export interface IUser {
   fcmToken?: string;
   subscription?: any;
   provider?: string;
+  role: number;
   hashPassword(): Promise<void>;
   validatePassword(password: string): Promise<boolean>;
 }
