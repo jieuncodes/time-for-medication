@@ -19,8 +19,6 @@ import { useEffect, useState } from 'react';
 import Error, { ErrorProps } from 'next/error';
 
 const SignUpForm = () => {
-  const [serverErrorMsg, setServerErrorMsg] = useState<string | null>(null);
-
   const defaultValues = {
     username: '',
     email: '',
@@ -32,11 +30,6 @@ const SignUpForm = () => {
     resolver: zodResolver(SignUpSchema),
     defaultValues,
   });
-
-  //debug
-  useEffect(() => {
-    console.log('serverErrorMsg', serverErrorMsg);
-  }, [serverErrorMsg]);
 
   const onSubmit = async (values: TSignUpSchema) => {
     try {
@@ -54,7 +47,10 @@ const SignUpForm = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setServerErrorMsg(errorData.message);
+        console.log('errorData', errorData);
+
+        //TODO: handle error messages for email and username
+        form.setError('username', { message: errorData.message });
 
         const registrationError: ErrorProps = {
           statusCode: response.status,
@@ -65,7 +61,6 @@ const SignUpForm = () => {
       }
 
       console.info('Registration successful');
-      setServerErrorMsg(null);
     } catch (error) {
       console.error('Form submission error:', error);
     }
