@@ -1,4 +1,3 @@
-// src/models/User.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -21,8 +20,8 @@ export class User implements IUser {
   @Column({ unique: true })
   username!: string;
 
-  @Column()
-  password!: string;
+  @Column({ nullable: true })
+  password?: string;
 
   @Column({ default: 0 })
   points!: number;
@@ -33,14 +32,17 @@ export class User implements IUser {
   @Column("json", { nullable: true })
   subscription?: any;
 
+  @Column({ nullable: true })
+  provider?: string;
+
   @Column({ type: "date", nullable: true })
-  lastLoginDate!: Date | null;
+  lastLoginDate?: Date | null;
 
   @Column({ type: "date" })
   registerDate!: Date;
 
   @Column({ type: "date", nullable: true })
-  lastLoginPoint!: Date | null;
+  lastLoginPoint?: Date | null;
 
   @OneToMany(() => Medication, (medication) => medication.user, {
     cascade: ["insert", "update", "remove"],
@@ -49,10 +51,9 @@ export class User implements IUser {
 
   @BeforeInsert()
   async hashPassword() {
-    if (!this.password) {
-      throw new Error("Password must be set before saving a user");
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
     }
-    this.password = await bcrypt.hash(this.password, 10);
   }
 
   async validatePassword(unencryptedPassword: string): Promise<boolean> {
