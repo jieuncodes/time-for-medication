@@ -8,14 +8,41 @@ import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import { RoundButton } from '@/components/button/RoundButton';
 import { LoginSchema, TLoginSchema } from '@/lib/validators/auth-validators';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+  const router = useRouter();
   const form = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = (values: TLoginSchema) => {
-    console.log(values);
+  const onSubmit = async (values: TLoginSchema) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      const response = await fetch(`${apiUrl}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...values,
+        }),
+      });
+
+      console.log('response', response);
+      if (!response.ok) {
+        toast.error('Wrong email or password');
+      }
+
+      const res = await response.json();
+      sessionStorage.setItem('token', res.data.accessToken);
+
+      router.push('/');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -23,7 +50,12 @@ const LoginForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormInput name="email" form={form} placeholder="Email" />
-          <FormInput name="password" form={form} placeholder="Password" />
+          <FormInput
+            name="password"
+            form={form}
+            placeholder="Password"
+            type="password"
+          />
           <Options>
             <RememberMe>
               <Checkbox id="remember" />

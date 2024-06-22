@@ -36,16 +36,10 @@ export const SignUpSchema = z
 export type TSignUpSchema = z.infer<typeof SignUpSchema>;
 
 export const LoginSchema = z.object({
-  email: z.string({ required_error: 'Email is required.' }).email({
-    message: 'Not a valid email address.',
+  email: z.string({ required_error: 'Email is required.' }),
+  password: z.string({
+    required_error: 'Password is required.',
   }),
-  password: z
-    .string({
-      required_error: 'Password is required.',
-    })
-    .min(8, {
-      message: 'Password must be at least 8 characters long.',
-    }),
 });
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
