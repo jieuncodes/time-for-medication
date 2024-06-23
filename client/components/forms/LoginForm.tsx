@@ -1,42 +1,76 @@
 'use client';
 
 import tw from 'tailwind-styled-components';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Checkbox } from '@/components/ui/checkbox';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import { RoundButton } from '@/components/button/RoundButton';
+import { LoginSchema, TLoginSchema } from '@/lib/validators/auth-validators';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import LoadingSpinner from '../icons/LoadingSpinner';
 
 const LoginForm = () => {
-  const formSchema = z.object({
-    email: z.string({ required_error: 'Email is required.' }).email({
-      message: 'Not a valid email address.',
-    }),
-    password: z
-      .string({
-        required_error: 'Password is required.',
-      })
-      .min(8, {
-        message: 'Password must be at least 8 characters long.',
-      }),
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const form = useForm<TLoginSchema>({
+    resolver: zodResolver(LoginSchema),
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
+  const onSubmit = async (values: TLoginSchema) => {
+    try {
+      setLoading(true);
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      const response = await fetch(`${apiUrl}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...values,
+        }),
+      });
+
+      console.log('response', response);
+      if (!response.ok) {
+        toast.error('Wrong email or password');
+        setLoading(false);
+        return;
+      }
+
+      const res = await response.json();
+      sessionStorage.setItem('token', res.data.accessToken);
+
+      router.push('/');
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   };
 
   return (
     <FormContainer>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormInput name="email" form={form} placeholder="Email" />
-          <FormInput name="password" form={form} placeholder="Password" />
+          <FormInput
+            name="email"
+            form={form}
+            placeholder="Email"
+            disabled={loading}
+          />
+          <FormInput
+            name="password"
+            form={form}
+            placeholder="Password"
+            type="password"
+            disabled={loading}
+          />
           <Options>
             <RememberMe>
               <Checkbox id="remember" />
@@ -45,7 +79,10 @@ const LoginForm = () => {
             <ForgotPassword>Forgot password?</ForgotPassword>
           </Options>
 
-          <LoginButton>Log In</LoginButton>
+          <LoginButton type="submit" disabled={loading}>
+            {loading && <LoadingSpinner />}
+            Log In
+          </LoginButton>
         </form>
       </Form>
     </FormContainer>
