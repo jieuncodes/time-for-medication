@@ -18,7 +18,7 @@ export const Options = tw.div`
   gap-2
 `;
 export const LoginButton = tw(RoundButton)`
-  mt-12
+  mt-14
   border-none
   bg-blue-500
   text-white

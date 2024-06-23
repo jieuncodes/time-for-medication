@@ -7,12 +7,16 @@ import { FunnelDesc, FunnelTitle } from '../../styles/funnel.styles';
 import { EmailSchema, TEmailSchema } from '@/lib/validators/auth-validators';
 import { SingleContent } from '../common';
 import { useFunnel } from '@/providers/FunnelProvider';
+import { useState } from 'react';
+import LoadingSpinner from '../icons/LoadingSpinner';
 
 const EmailForm = ({
   setEmail,
 }: {
   setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) => {
+  const [loading, setLoading] = useState(false);
+
   const { toNext } = useFunnel();
   const defaultValues = {
     email: '',
@@ -23,12 +27,18 @@ const EmailForm = ({
   });
 
   const onSubmitEmail = async () => {
+    setLoading(true);
+
     try {
       const data = emailForm.getValues();
       setEmail(data.email);
+      //TODO: if error
+      // setLoading(false);
+
       toNext();
     } catch (error) {
       console.error('Error in onSubmitEmail:', error);
+      setLoading(false);
     }
   };
 
@@ -46,7 +56,8 @@ const EmailForm = ({
             placeholder="your-email@google.com"
             moreStyles="mt-10 mb-8"
           />
-          <Button type="submit" size={'full'}>
+          <Button type="submit" size={'full'} disabled={loading}>
+            {loading && <LoadingSpinner />}
             Verify
           </Button>
         </form>

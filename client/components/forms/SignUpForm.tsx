@@ -1,15 +1,10 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
-import {
-  FormContainer,
-  ColForms,
-  Options,
-  LoginButton,
-} from './SignUpForm.styles';
+import { FormContainer, ColForms, LoginButton } from './SignUpForm.styles';
 import {
   SignUpSchema,
   TSignUpSchema,
@@ -17,7 +12,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
-import { LinkText } from '@/components/common';
+import { FunnelTitle } from '@/styles/funnel.styles';
 
 const SignUpForm = ({ email }: { email: string | undefined }) => {
   const router = useRouter();
@@ -59,7 +54,8 @@ const SignUpForm = ({ email }: { email: string | undefined }) => {
         return;
       }
 
-      router.push('/login');
+      console.log('value', values);
+      // router.push('/login');
     } catch (error) {
       console.error('Form submission error:', error);
       setLoading(false);
@@ -68,6 +64,8 @@ const SignUpForm = ({ email }: { email: string | undefined }) => {
 
   return (
     <FormContainer>
+      <FunnelTitle className=" mb-12">Finish your signup process</FunnelTitle>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <ColForms>
@@ -101,11 +99,6 @@ const SignUpForm = ({ email }: { email: string | undefined }) => {
             {loading && <LoadingSpinner />}
             Create Account
           </LoginButton>
-
-          <Options>
-            {`Already have an account?`}
-            <LinkText href="/login">{`Sign In`}</LinkText>
-          </Options>
         </form>
       </Form>
     </FormContainer>

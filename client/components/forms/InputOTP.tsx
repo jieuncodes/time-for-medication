@@ -18,7 +18,8 @@ import {
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
 import { useFunnel } from '@/providers/FunnelProvider';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import LoadingSpinner from '../icons/LoadingSpinner';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -26,7 +27,11 @@ const FormSchema = z.object({
   }),
 });
 
+const FAKE_CODE = 123456;
+
 export function InputOTPForm() {
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -34,14 +39,15 @@ export function InputOTPForm() {
     },
   });
 
-  const FAKE_CODE = 123456;
   const { toNext } = useFunnel();
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    setLoading(true);
     if (parseInt(data.pin) === FAKE_CODE) {
       toNext();
     } else {
       form.setError('pin', { message: 'Invalid pin' });
+      setLoading(false);
     }
   };
 
@@ -79,7 +85,13 @@ export function InputOTPForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" size={'full'} className="mt-10">
+        <Button
+          type="submit"
+          size={'full'}
+          disabled={loading}
+          className="mt-10"
+        >
+          {loading && <LoadingSpinner />}
           Verify
         </Button>
       </form>
