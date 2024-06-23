@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useEffect } from 'react';
 import GoBackButton from '@/components/button/GoBackButton';
 import { Content, Header } from '@/components/common';
 import { TEmailSchema } from '@/lib/validators/auth-validators';
@@ -35,6 +35,12 @@ interface StepManagerProps {
 const StepManager: FC<StepManagerProps> = ({ email, setEmail }) => {
   const { step, toFirst, toPrev, hasPrev, hasNext } = useFunnel();
 
+  useEffect(() => {
+    if (!email && step !== 'email-input-step') {
+      toFirst();
+    }
+  }, [email, step, toFirst]);
+
   return (
     <>
       <Header>
@@ -56,9 +62,9 @@ const getStepComponent = (
     case 'email-input-step':
       return <EmailForm setEmail={setEmail} />;
     case 'email-verification':
-      return <EmailVerification email={email} />;
+      return email && <EmailVerification email={email} />;
     case 'sign-up-final':
-      return <SignUpForm email={email} />;
+      return email && <SignUpForm email={email} />;
     default:
       return null;
   }
