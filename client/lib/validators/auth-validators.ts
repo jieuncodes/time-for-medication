@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+export const EmailSchema = z.object({
+  email: z
+    .string({ required_error: 'Email is required.' })
+    .email({ message: 'Not a valid email address.' }),
+});
+
+export type TEmailSchema = z.infer<typeof EmailSchema>;
+
 export const SignUpSchema = z
   .object({
     username: z.string({ required_error: 'Username is required.' }),
