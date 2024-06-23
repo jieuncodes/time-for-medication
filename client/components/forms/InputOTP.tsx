@@ -7,10 +7,8 @@ import { z } from 'zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -19,6 +17,7 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
+import { useFunnel } from '@/providers/FunnelProvider';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -34,8 +33,14 @@ export function InputOTPForm() {
     },
   });
 
+  const FAKE_CODE = 123456;
+  const { toNext } = useFunnel();
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('data', data);
+    if (parseInt(data.pin) === FAKE_CODE) {
+      toNext();
+    } else {
+      form.setError('pin', { message: 'Invalid pin' });
+    }
   }
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
 import {
@@ -19,13 +19,13 @@ import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
 import { LinkText } from '@/components/common';
 
-const SignUpForm = () => {
+const SignUpForm = ({ email }: { email: string | undefined }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const defaultValues = {
     username: '',
-    email: '',
+    email: email || '',
     password: '',
     passwordConfirm: '',
   };
@@ -76,13 +76,9 @@ const SignUpForm = () => {
               form={form}
               label="Username"
               disabled={loading}
+              autoComplete="false"
             />
-            <FormInput
-              name="email"
-              form={form}
-              label="Email"
-              disabled={loading}
-            />
+            <FormInput name="email" form={form} label="Email" disabled />
             <FormInput
               name="password"
               form={form}
