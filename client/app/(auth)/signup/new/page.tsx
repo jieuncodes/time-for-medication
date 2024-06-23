@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, FC } from 'react';
 import GoBackButton from '@/components/button/GoBackButton';
 import { Content, Header } from '@/components/common';
 import { TEmailSchema } from '@/lib/validators/auth-validators';
@@ -9,7 +9,11 @@ import EmailVerification from '@/components/forms/EmailVerification';
 import { FunnelProvider, useFunnel } from '@/providers/FunnelProvider';
 import SignUpForm from '@/components/forms/SignUpForm';
 
-const SignUpWithEmail = () => {
+interface SignUpWithEmailProps {
+  steps: string[];
+}
+
+const SignUpWithEmail: FC<SignUpWithEmailProps> = () => {
   const [email, setEmail] = useState<TEmailSchema['email']>();
 
   const steps = ['email-input-step', 'email-verification', 'sign-up-final'];
@@ -23,13 +27,12 @@ const SignUpWithEmail = () => {
   );
 };
 
-const StepManager = ({
-  email,
-  setEmail,
-}: {
+interface StepManagerProps {
   email: string | undefined;
   setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
-}) => {
+}
+
+const StepManager: FC<StepManagerProps> = ({ email, setEmail }) => {
   const { step, toFirst, toPrev, hasPrev, hasNext } = useFunnel();
 
   return (
@@ -39,13 +42,26 @@ const StepManager = ({
           onClick={hasNext ? toFirst : hasPrev ? toPrev : undefined}
         />
       </Header>
-      <>
-        {step === 'email-input-step' && <EmailForm setEmail={setEmail} />}
-        {step === 'email-verification' && <EmailVerification email={email} />}
-        {step === 'sign-up-final' && <SignUpForm email={email} />}
-      </>
+      {getStepComponent(step, email, setEmail)}
     </>
   );
+};
+
+const getStepComponent = (
+  step: string,
+  email: string | undefined,
+  setEmail: React.Dispatch<React.SetStateAction<string | undefined>>
+) => {
+  switch (step) {
+    case 'email-input-step':
+      return <EmailForm setEmail={setEmail} />;
+    case 'email-verification':
+      return <EmailVerification email={email} />;
+    case 'sign-up-final':
+      return <SignUpForm email={email} />;
+    default:
+      return null;
+  }
 };
 
 export default SignUpWithEmail;
