@@ -17,15 +17,13 @@
         "name": "next"
       }
     ],
-    "baseUrl": "client",
     "paths": {
-      "@/*": ["./*"],
       "@/components/*": ["./components/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/lib/*": ["./lib/*"],
       "@/types/*": ["./types/*"]
     }
   },
-  "include": ["client/**/*", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
