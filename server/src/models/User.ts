@@ -44,6 +44,9 @@ export class User implements IUser {
   @Column({ type: "date", nullable: true })
   lastLoginPoint?: Date | null;
 
+  @Column({ default: 0 })
+  role!: number;
+
   @OneToMany(() => Medication, (medication) => medication.user, {
     cascade: ["insert", "update", "remove"],
   })
