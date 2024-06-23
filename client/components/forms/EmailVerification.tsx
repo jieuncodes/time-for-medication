@@ -1,9 +1,7 @@
 import Lottie from 'lottie-react';
 import emailSend from '@/public/lottie/email-send.json';
 import { FunnelDesc, FunnelTitle, FunnelWrapper } from '@/styles/funnel.styles';
-
 import { LottieWrapper } from '../common';
-
 import { InputOTPForm } from './InputOTP';
 
 const EmailVerification = ({ email }: { email: string }) => {

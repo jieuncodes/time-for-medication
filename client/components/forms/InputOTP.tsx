@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
 import { useFunnel } from '@/providers/FunnelProvider';
+import { useEffect } from 'react';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -35,13 +36,24 @@ export function InputOTPForm() {
 
   const FAKE_CODE = 123456;
   const { toNext } = useFunnel();
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
     if (parseInt(data.pin) === FAKE_CODE) {
       toNext();
     } else {
       form.setError('pin', { message: 'Invalid pin' });
     }
-  }
+  };
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value?.pin?.length === 6) {
+        onSubmit({ pin: value.pin });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   return (
     <Form {...form}>
