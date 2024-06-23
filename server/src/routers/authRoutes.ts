@@ -152,4 +152,30 @@ router.delete(
   })
 );
 
+// POST: Check if email or username is already taken
+router.post(
+  "/check-duplicate",
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, username } = req.body;
+
+    if (email) {
+      const existingEmail = await userRepository.findOneBy({ email });
+      if (existingEmail) {
+        return sendErrorResponse(res, 400, "Email already taken");
+      }
+      return sendSuccessResponse(res, "Email is available");
+    }
+
+    if (username) {
+      const existingUsername = await userRepository.findOneBy({ username });
+      if (existingUsername) {
+        return sendErrorResponse(res, 400, "Username already taken");
+      }
+      return sendSuccessResponse(res, "Username is available");
+    }
+
+    sendErrorResponse(res, 400, "Input is required");
+  })
+);
+
 export default router;
