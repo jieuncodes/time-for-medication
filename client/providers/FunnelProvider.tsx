@@ -4,6 +4,7 @@ import React, {
   useState,
   ReactNode,
   useCallback,
+  useEffect,
 } from 'react';
 
 interface FunnelContextProps {
@@ -13,6 +14,8 @@ interface FunnelContextProps {
   toPrev: () => void;
   hasNext: boolean;
   hasPrev: boolean;
+  toFirst: () => void;
+  toLast: () => void;
 }
 
 const FunnelContext = createContext<FunnelContextProps | undefined>(undefined);
@@ -30,7 +33,6 @@ export const FunnelProvider = <T extends readonly string[]>({
   children,
 }: {
   steps: string[];
-  initialStep: string;
   children: ReactNode;
 }) => {
   const [step, setStep] = useState<T[number]>(steps[0]);
@@ -40,18 +42,12 @@ export const FunnelProvider = <T extends readonly string[]>({
   const hasNext = currentIdx < steps.length - 1;
 
   const toPrev = useCallback(() => {
-    if (!hasPrev) {
-      return;
-    }
-
+    if (!hasPrev) return;
     setStep(steps[currentIdx - 1]);
   }, [currentIdx, hasPrev, steps]);
 
   const toNext = useCallback(() => {
-    if (!hasNext) {
-      return;
-    }
-
+    if (!hasNext) return;
     setStep(steps[currentIdx + 1]);
   }, [currentIdx, hasNext, steps]);
 
@@ -65,7 +61,16 @@ export const FunnelProvider = <T extends readonly string[]>({
 
   return (
     <FunnelContext.Provider
-      value={{ step, setStep, toNext, toPrev, hasNext, hasPrev }}
+      value={{
+        step,
+        setStep,
+        toNext,
+        toPrev,
+        hasNext,
+        hasPrev,
+        toFirst,
+        toLast,
+      }}
     >
       {children}
     </FunnelContext.Provider>

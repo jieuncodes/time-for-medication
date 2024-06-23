@@ -1,109 +1,51 @@
 'use client';
-import createFunnel from '@/components/Funnel/createFunnel';
+
+import React, { useState } from 'react';
 import GoBackButton from '@/components/button/GoBackButton';
-import { Content, LinkText, Title } from '@/components/common';
-import SignUpForm from '@/components/forms/SignUpForm';
-import {
-  FormContainer,
-  ColForms,
-  Options,
-  LoginButton,
-} from '@/components/forms/SignUpForm.styles';
-import tw from 'tailwind-styled-components';
-import { Form } from '@/components/ui/form';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { SignUpSchema, TSignUpSchema } from '@/lib/validators/auth-validators';
-import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from '@/components/inputs/FormInput';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { Button } from '@/components/ui/button';
+import { Content, Header } from '@/components/common';
+import { TEmailSchema } from '@/lib/validators/auth-validators';
 import EmailForm from '@/components/forms/EmailForm';
+import EmailVerification from '@/components/forms/EmailVerification';
+import { FunnelProvider, useFunnel } from '@/providers/FunnelProvider';
+import SignUpForm from '@/components/forms/SignUpForm';
 
-export default function SignUpWithEmail() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+const SignUpWithEmail = () => {
+  const [email, setEmail] = useState<TEmailSchema['email']>();
 
-  const defaultValues = {
-    username: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-  };
-
-  const { Funnel, Step, useFunnel } = createFunnel([
-    'email-input-step',
-    'email-verification',
-  ] as const);
-  const { step, hasNext, hasPrev, setStep, toNext, toPrev } = useFunnel();
-
-  const form = useForm<TSignUpSchema>({
-    resolver: zodResolver(SignUpSchema),
-    defaultValues,
-  });
-
-  const onSubmit = async (values: TSignUpSchema) => {
-    setLoading(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-      const response = await fetch(`${apiUrl}/api/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log('errorData', errorData);
-
-        //TODO: handle error messages for email and username
-        form.setError('username', { message: errorData.message });
-
-        setLoading(false);
-        return;
-      }
-
-      router.push('/login');
-    } catch (error) {
-      console.error('Form submission error:', error);
-      setLoading(false);
-    }
-  };
+  const steps = ['email-input-step', 'email-verification', 'sign-up-final'];
 
   return (
-    <Content>
-      <Header>
-        <GoBackButton />
-      </Header>
-      <Form {...form}>
-        <Funnel step={step}>
-          <Step name="email-input-step">
-            <EmailForm toNext={toNext} />
-          </Step>
-          <Step name="email-verification">asdf</Step>
-        </Funnel>
-      </Form>
-      {/* <Title>Sign up to MedTime</Title>
-      <SignUpForm /> */}
-    </Content>
+    <FunnelProvider steps={steps}>
+      <Content>
+        <StepManager email={email} setEmail={setEmail} />
+      </Content>
+    </FunnelProvider>
   );
-}
+};
 
-const FunnelTitle = tw.h1`
-  mb-4
-  text-2xl
-  font-semibold
-`;
-const Header = tw.div`
-  relative
-  mb-4
-  mt-2
-  flex
-  h-12
-  w-full
-  items-center
-`;
+const StepManager = ({
+  email,
+  setEmail,
+}: {
+  email: string | undefined;
+  setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
+}) => {
+  const { step, toFirst, toPrev, hasPrev, hasNext } = useFunnel();
+
+  return (
+    <>
+      <Header>
+        <GoBackButton
+          onClick={hasNext ? toFirst : hasPrev ? toPrev : undefined}
+        />
+      </Header>
+      <>
+        {step === 'email-input-step' && <EmailForm setEmail={setEmail} />}
+        {step === 'email-verification' && <EmailVerification email={email} />}
+        {step === 'sign-up-final' && <SignUpForm email={email} />}
+      </>
+    </>
+  );
+};
+
+export default SignUpWithEmail;
