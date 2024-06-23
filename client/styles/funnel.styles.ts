@@ -5,14 +5,18 @@ export const FunnelWrapper = tw.div`
   w-full
   flex-col
   items-center
+  justify-center
+  bg-red-50
 `;
 export const FunnelTitle = tw.h1`
   mb-4
   w-full
   text-2xl
-  font-semibold
+  font-bold
+  text-black
 `;
 
 export const FunnelDesc = tw.p`
+  mb-10
   text-gray-500
 `;
