@@ -18,6 +18,9 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+
+  // TODO :Storing sensitive tokens in session storage can be insecure, as it is accessible via JavaScript and vulnerable to XSS attacks. Consider using secure HTTP-only cookies or other more secure methods for token management.
+
   const { setValue: setSessionToken } = useSessionStorage({
     key: 'token',
   });

@@ -5,8 +5,7 @@ export function assert(
   if (!condition) {
     if (typeof error === 'string') {
       throw new Error(error);
-    } else {
-      throw error;
     }
+    throw error;
   }
 }

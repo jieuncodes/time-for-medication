@@ -20,7 +20,7 @@ const SignUpForm = ({ email }: { email: string | undefined }) => {
 
   const defaultValues = {
     username: '',
-    email: email || '',
+    email: email ?? '',
     password: '',
     passwordConfirm: '',
   };
