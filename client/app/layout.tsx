@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en" className="w-full h-full">
       <body className="w-full h-full flex align-middle justify-center">
         <div className="flex flex-row items-center">
-          <div className="w-80 mr-36">
+          <div className="w-80 mr-36 hidden lg:block">
             Aliquip labore dolore et exercitation magna aute laborum incididunt
             adipisicing voluptate reprehenderit magna labore.
           </div>
