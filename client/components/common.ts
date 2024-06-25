@@ -1,17 +1,27 @@
-import tw from "tailwind-styled-components";
+import tw from 'tailwind-styled-components';
 
 export const Content = tw.div`
   top-0
   flex
-  h-auto
+  h-full
   w-full
   flex-col
   items-center
   justify-center
+  overflow-x-hidden
   overflow-y-scroll
   px-6
   py-8
-  text-black
+`;
+
+export const SingleContent = tw.div`
+  flex
+  h-full
+  flex-col
+  items-center
+  justify-center
+  overflow-x-hidden
+  pb-48
 `;
 export const Title = tw.h1`
   left-0
@@ -41,4 +51,22 @@ export const Divider = tw.div`
 `;
 export const LinkText = tw.a`
   text-blue-500
+`;
+
+export const LottieWrapper = tw.div`
+  mb-14
+  h-48
+  w-48
+`;
+
+export const Header = tw.div`
+  absolute
+  top-0
+  mt-6
+  box-border
+  flex
+  h-12
+  w-full
+  items-center
+  pl-5
 `;

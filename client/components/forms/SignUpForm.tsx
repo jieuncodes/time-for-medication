@@ -4,29 +4,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import FormInput from '@/components/inputs/FormInput';
 import { Form } from '@/components/ui/form';
-import { LinkText } from '@/components/common';
-import {
-  FormContainer,
-  ColForms,
-  Options,
-  LoginButton,
-} from './SignUpForm.styles';
+import { FormContainer, ColForms, LoginButton } from './SignUpForm.styles';
 import {
   SignUpSchema,
   TSignUpSchema,
 } from '../../lib/validators/auth-validators';
-import { ErrorProps } from 'next/error';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
+import { FunnelTitle } from '@/styles/funnel.styles';
 
-const SignUpForm = () => {
+const SignUpForm = ({ email }: { email: string | undefined }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const defaultValues = {
     username: '',
-    email: '',
+    email: email ?? '',
     password: '',
     passwordConfirm: '',
   };
@@ -60,7 +54,8 @@ const SignUpForm = () => {
         return;
       }
 
-      router.push('/login');
+      console.log('value', values);
+      // router.push('/login');
     } catch (error) {
       console.error('Form submission error:', error);
       setLoading(false);
@@ -69,6 +64,8 @@ const SignUpForm = () => {
 
   return (
     <FormContainer>
+      <FunnelTitle className=" mb-12">Finish your signup process</FunnelTitle>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <ColForms>
@@ -77,13 +74,9 @@ const SignUpForm = () => {
               form={form}
               label="Username"
               disabled={loading}
+              autoComplete="false"
             />
-            <FormInput
-              name="email"
-              form={form}
-              label="Email"
-              disabled={loading}
-            />
+            <FormInput name="email" form={form} label="Email" disabled />
             <FormInput
               name="password"
               form={form}
@@ -106,11 +99,6 @@ const SignUpForm = () => {
             {loading && <LoadingSpinner />}
             Create Account
           </LoginButton>
-
-          <Options>
-            {`Already have an account?`}
-            <LinkText href="/login">{`Sign In`}</LinkText>
-          </Options>
         </form>
       </Form>
     </FormContainer>

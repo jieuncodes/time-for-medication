@@ -12,11 +12,19 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
+import useSessionStorage from '@/hooks/useSessionStorage';
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+
+  // TODO :Storing sensitive tokens in session storage can be insecure, as it is accessible via JavaScript and vulnerable to XSS attacks. Consider using secure HTTP-only cookies or other more secure methods for token management.
+
+  const { setValue: setSessionToken } = useSessionStorage({
+    key: 'token',
+  });
+
   const form = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
@@ -37,7 +45,6 @@ const LoginForm = () => {
         }),
       });
 
-      console.log('response', response);
       if (!response.ok) {
         toast.error('Wrong email or password');
         setLoading(false);
@@ -45,7 +52,7 @@ const LoginForm = () => {
       }
 
       const res = await response.json();
-      sessionStorage.setItem('token', res.data.accessToken);
+      setSessionToken(res.data.accessToken);
 
       router.push('/');
     } catch (error) {
