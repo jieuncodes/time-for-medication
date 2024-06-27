@@ -1,10 +1,12 @@
-import { RoundButton } from "../button/RoundButton";
-import tw from "tailwind-styled-components";
+import { RoundButton } from '../button/RoundButton';
+import tw from 'tailwind-styled-components';
 
 export const FormContainer = tw.div`
   flex
+  h-full
   w-full
   flex-col
+  justify-center
 `;
 export const Options = tw.div`
   h-fit-content
@@ -16,7 +18,7 @@ export const Options = tw.div`
   gap-2
 `;
 export const LoginButton = tw(RoundButton)`
-  mt-12
+  mt-14
   border-none
   bg-blue-500
   text-white

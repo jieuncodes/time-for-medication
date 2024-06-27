@@ -1,26 +1,73 @@
-import GoBackButton from '@/components/button/GoBackButton';
-import { Content, Title } from '@/components/common';
-import SignUpForm from '@/components/forms/SignUpForm';
-import tw from 'tailwind-styled-components';
+'use client';
 
-export default function SignUpWithEmail() {
-  return (
-    <Content>
-      <Header>
-        <GoBackButton />
-      </Header>
-      <Title>Sign up to MedTime</Title>
-      <SignUpForm />
-    </Content>
-  );
+import React, { useState, FC, useEffect } from 'react';
+import GoBackButton from '@/components/button/GoBackButton';
+import { Content, Header } from '@/components/common';
+import { TEmailSchema } from '@/lib/validators/auth-validators';
+import EmailForm from '@/components/forms/EmailForm';
+import EmailVerification from '@/components/forms/EmailVerification';
+import { FunnelProvider, useFunnel } from '@/providers/FunnelProvider';
+import SignUpForm from '@/components/forms/SignUpForm';
+
+interface SignUpWithEmailProps {
+  steps: string[];
 }
 
-const Header = tw.div`
-  relative
-  mb-4
-  mt-2
-  flex
-  h-12
-  w-full
-  items-center
-`;
+const SignUpWithEmail: FC<SignUpWithEmailProps> = () => {
+  const [email, setEmail] = useState<TEmailSchema['email']>();
+
+  const steps = ['email-input-step', 'email-verification', 'sign-up-final'];
+
+  return (
+    <FunnelProvider steps={steps}>
+      <Content>
+        <StepManager email={email} setEmail={setEmail} />
+      </Content>
+    </FunnelProvider>
+  );
+};
+
+interface StepManagerProps {
+  email: string | undefined;
+  setEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
+
+const StepManager: FC<StepManagerProps> = ({ email, setEmail }) => {
+  const { step, toFirst, toPrev, hasPrev, hasNext } = useFunnel();
+
+  useEffect(() => {
+    if (!email && step !== 'email-input-step') {
+      toFirst();
+    }
+  }, [email, step, toFirst]);
+
+  return (
+    <>
+      <Header>
+        <GoBackButton
+          onClick={hasNext ? toFirst : hasPrev ? toPrev : undefined}
+        />
+      </Header>
+      {getStepComponent(step, email, setEmail)}
+    </>
+  );
+};
+
+const getStepComponent = (
+  step: string,
+  email: string | undefined,
+  setEmail: React.Dispatch<React.SetStateAction<string | undefined>>
+) => {
+  switch (step) {
+    case 'email-input-step':
+      return <EmailForm setEmail={setEmail} />;
+    case 'email-verification':
+      return email && <EmailVerification email={email} />;
+    case 'sign-up-final':
+      return email && <SignUpForm email={email} />;
+    default:
+      return null;
+  }
+};
+
+export default SignUpWithEmail;

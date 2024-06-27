@@ -15,6 +15,8 @@ interface FormInputProps<T extends FieldValues> {
   label?: string;
   moreStyles?: string;
   type?: string;
+  autoComplete?: string;
+  disabled?: boolean;
 }
 
 const FormInput = <T extends FieldValues>({
@@ -24,6 +26,7 @@ const FormInput = <T extends FieldValues>({
   label,
   moreStyles,
   type = 'text',
+  disabled = false,
 }: FormInputProps<T>) => {
   return (
     <FormField
@@ -34,7 +37,12 @@ const FormInput = <T extends FieldValues>({
           <FormControl>
             <>
               {label && <Label htmlFor={name}>{label}</Label>}
-              <StyledInput placeholder={placeholder} {...field} type={type} />
+              <StyledInput
+                placeholder={placeholder}
+                {...field}
+                type={type}
+                disabled={disabled}
+              />
             </>
           </FormControl>
           <FormMessage />
@@ -48,7 +56,9 @@ export default FormInput;
 
 const StyledInput = tw(Input)`
   text-md
+  user-select-none
   h-12
+  select-none
   rounded-xl
   border
   border-gray-300
