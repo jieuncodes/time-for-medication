@@ -28,7 +28,7 @@ app.use(
       frameSrc: ["'self'", "https://www.youtube.com"], //need to edit
     },
     reportOnly: config.nodeEnv !== "production", // Report-only mode in non-production environments
-  }),
+  })
 );
 
 app.use(
@@ -36,7 +36,7 @@ app.use(
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true,
-  }),
+  })
 );
 
 app.use(helmet.hidePoweredBy());
@@ -49,7 +49,7 @@ app.use(
   cors({
     origin: config.allowedOrigins,
     optionsSuccessStatus: 200,
-  }),
+  })
 );
 
 app.use(cookieParser());
@@ -66,9 +66,12 @@ const RateLimiter = (maxRequests: number) =>
   });
 
 app.use(RateLimiter(100)); // General rate limiter
-app.use("/api", authRoutes, RateLimiter(10));
-app.use("/api/medications", medicationRoutes, RateLimiter(50));
-app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/auth", RateLimiter(10));
+app.use("/api/medication", RateLimiter(50));
+
+app.use("/api/auth", authRoutes);
+app.use("/api/medication", medicationRoutes);
+app.use("/api/subscription", subscriptionRoutes);
 
 // Simulate an error route for testing
 app.get("/api/error", (req, res) => {

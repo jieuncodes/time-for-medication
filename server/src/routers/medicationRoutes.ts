@@ -46,7 +46,7 @@ router.post(
   updatePoints,
   (req: MedicationRequest, res: Response) => {
     sendSuccessResponse(res, req.body.medication);
-  },
+  }
 );
 
 // GET: Retrieve all medications for the logged-in user
@@ -57,7 +57,7 @@ router.get(
       where: { user: { id: req.user!.id } },
     });
     sendSuccessResponse(res, medications);
-  }),
+  })
 );
 
 // PUT: Update a medication
@@ -99,7 +99,7 @@ router.put(
   updatePoints,
   (req: MedicationRequest, res: Response) => {
     sendSuccessResponse(res, req.body.medication);
-  },
+  }
 );
 
 // DELETE: Remove a medication
@@ -127,8 +127,8 @@ router.delete(
   }),
   updatePoints,
   (req: MedicationRequest, res: Response) => {
-    res.status(204).send();
-  },
+    sendSuccessResponse(res, "Medication deleted");
+  }
 );
 
 export default router;
