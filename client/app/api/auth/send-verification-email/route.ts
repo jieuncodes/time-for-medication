@@ -13,15 +13,15 @@ const generateOtp = async (email: string): Promise<string> => {
     }
   );
 
-  const data = await response.json();
-  if (!response.ok || !data.otp) {
-    throw new Error(data.error || 'Failed to generate OTP');
+  const res = await response.json();
+  if (!response.ok || !res.data.otp) {
+    throw new Error(res.error || 'Failed to generate OTP');
   }
 
-  return data.otp;
+  return res.data.otp;
 };
 const createTransporter = () => {
-  return nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT),
     secure: true,
@@ -30,6 +30,8 @@ const createTransporter = () => {
       pass: process.env.RESEND_API_KEY,
     },
   });
+
+  return transporter;
 };
 
 const sendEmail = async (
@@ -38,12 +40,18 @@ const sendEmail = async (
   text: string
 ): Promise<void> => {
   const transporter = createTransporter();
-  await transporter.sendMail({
-    from: process.env.ADMIN_EMAIL,
-    to: email,
-    subject: subject,
-    text: text,
-  });
+
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: subject,
+      text: text,
+    });
+  } catch (error) {
+    console.error('Error sending email: ', error);
+    throw error;
+  }
 };
 
 export async function POST(req: NextRequest) {
@@ -78,7 +86,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error parsing request body:', error);
     return NextResponse.json(
-      { error: 'Invalid request body' },
+      { error: 'Invalid request body', details: error },
       { status: 400 }
     );
   }
