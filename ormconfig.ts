@@ -1,6 +1,7 @@
 import { DataSourceOptions } from "typeorm";
 import { User } from "./server/src/models/User.ts";
 import { Medication } from "./server/src/models/Medication.ts";
+import { Otp } from "./server/src/models/Otp.ts";
 import config from "./server/src/config.ts";
 
 const dataSourceOptions: DataSourceOptions = {
@@ -12,7 +13,7 @@ const dataSourceOptions: DataSourceOptions = {
   database: config.dbName,
   synchronize: config.nodeEnv !== "production",
   logging: ["warn", "error"],
-  entities: [User, Medication],
+  entities: [User, Medication, Otp],
   migrations: [],
   subscribers: [],
 };
