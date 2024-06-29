@@ -26,12 +26,39 @@ const EmailForm = ({
     defaultValues,
   });
 
+  const checkEmailExists = async (email: string) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/check-duplicate`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+    const data = await response.json();
+    if (data.exists) {
+      // Handle duplicate email case
+      return true;
+    } else {
+      // Handle non-duplicate email case
+      return false;
+    }
+  };
+
   const onSubmitEmail = async () => {
     setLoading(true);
 
     try {
       const data = emailForm.getValues();
       setEmail(data.email);
+
+      const emailExists = await checkEmailExists(data.email);
+
+      if (emailExists) {
+        console.log('exists');
+      }
       //TODO: if error
       // setLoading(false);
 
