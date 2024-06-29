@@ -4,7 +4,30 @@ import nodemailer from 'nodemailer';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, subject, message } = body;
+    const { email, subject } = body;
+
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/generate-otp`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok || !data.otp) {
+      return NextResponse.json(
+        { error: data.error || 'Failed to generate OTP' },
+        { status: response.status }
+      );
+    }
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -20,8 +43,8 @@ export async function POST(req: NextRequest) {
       await transporter.sendMail({
         from: process.env.ADMIN_EMAIL,
         to: email,
-        subject: subject,
-        text: message,
+        subject: subject || 'Your OTP Code',
+        text: `Please use the following OTP to verify your email: ${data.otp}`,
       });
 
       return NextResponse.json(

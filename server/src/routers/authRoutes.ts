@@ -13,10 +13,10 @@ import {
   passwordValidation,
   fcmTokenValidation,
   usernameValidation,
-} from "../utils/validation";
-import { authenticateToken } from "../middlewares/authenticateToken";
-import config from "../config";
-import { asyncHandler } from "../utils/asyncHandler";
+} from "../utils/validation.ts";
+import { authenticateToken } from "../middlewares/authenticateToken.ts";
+import config from "../config.ts";
+import { asyncHandler } from "../utils/asyncHandler.ts";
 import crypto from 'crypto';
 import { Otp } from "../models/Otp.ts";
 

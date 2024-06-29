@@ -15,11 +15,7 @@ const EmailVerification = ({ email }: { email: string }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email,
-          subject: 'Verify your email',
-          message: 'Please click the link to verify your email address.',
-        }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
