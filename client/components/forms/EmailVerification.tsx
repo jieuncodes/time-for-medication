@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import LoadingSpinner from '../icons/LoadingSpinner';
 import { useFunnel } from '@/providers/FunnelProvider';
-import { set } from 'zod';
 
 const EmailVerification = ({ email }: { email: string }) => {
   const [message, setMessage] = useState<string | null>(null);
@@ -32,14 +31,13 @@ const EmailVerification = ({ email }: { email: string }) => {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         setIsSending(false);
       } else {
+        setIsSending(false);
         setMessage(`Error: ${data.error}`);
       }
     } catch (error) {
-      console.log('catched');
       setMessage('An unexpected error occurred.');
       setIsSending(false);
     }
