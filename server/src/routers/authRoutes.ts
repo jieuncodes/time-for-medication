@@ -191,12 +191,14 @@ router.post(
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
+    const expirationTime = new Date(Date.now() + 5 * 60 * 1000);
+    await otpRepository.save({ email, otp, expirationTime });
 
     const newOtp = otpRepository.create({
       email,
       otp,
+      expirationTime,
     });
-    await otpRepository.save(newOtp);
 
     sendSuccessResponse(res, {
       message: "OTP generated and saved successfully",

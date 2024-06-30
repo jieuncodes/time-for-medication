@@ -18,4 +18,7 @@ export class Otp {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({ type: "timestamp" })
+  expirationTime!: Date;
 }
