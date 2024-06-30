@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { useFunnel } from '@/providers/FunnelProvider';
 import { useEffect, useState } from 'react';
 import LoadingSpinner from '../icons/LoadingSpinner';
+import { compareUserOTP } from '../../app/services/emailServices';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -27,9 +28,7 @@ const FormSchema = z.object({
   }),
 });
 
-const FAKE_CODE = 123456;
-
-export function InputOTPForm() {
+export function InputOTPForm({ email }: { email: string }) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -41,12 +40,18 @@ export function InputOTPForm() {
 
   const { toNext } = useFunnel();
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setLoading(true);
-    if (parseInt(data.pin) === FAKE_CODE) {
+
+    const otpComparisonResult = await compareUserOTP({
+      email,
+      otp: data.pin,
+    });
+
+    if (otpComparisonResult.success) {
       toNext();
     } else {
-      form.setError('pin', { message: 'Invalid pin' });
+      form.setError('pin', { message: 'Wrong code. Please try again.' });
       setLoading(false);
     }
   };
