@@ -54,9 +54,7 @@ export const LinkText = tw.a`
 `;
 
 export const LottieWrapper = tw.div`
-  mb-14
-  h-48
-  w-48
+  w-60
 `;
 
 export const Header = tw.div`
@@ -69,4 +67,12 @@ export const Header = tw.div`
   w-full
   items-center
   pl-5
+`;
+
+export const ButtonsBox = tw.div`
+  mt-6
+  flex
+  w-full
+  flex-row
+  gap-3
 `;
