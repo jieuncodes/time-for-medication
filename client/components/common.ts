@@ -76,3 +76,10 @@ export const ButtonsBox = tw.div`
   flex-row
   gap-3
 `;
+
+export const MutedDesc = tw.p`
+  ml-1
+  self-end
+  text-sm
+  font-normal
+`;

@@ -17,15 +17,18 @@ const EmailVerification = ({ email }: { email: string }) => {
   const [message, setMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [expirationTime, setExpirationTime] = useState<Date>();
 
   const { toPrev } = useFunnel();
 
   const handleEmailSendResult = (result: {
     success: boolean;
+    expirationTime?: Date;
     error?: string;
   }) => {
     if (result.success) {
       setIsSending(false);
+      setExpirationTime(result.expirationTime);
     } else {
       setIsSending(false);
       setMessage(`Error: ${result.error}`);
@@ -100,7 +103,11 @@ const EmailVerification = ({ email }: { email: string }) => {
             <FunnelTitle>Verification code</FunnelTitle>
             <FunnelDesc>{`Enter the verification code sent to ${email}`}</FunnelDesc>
 
-            <OTPInputs email={email} />
+            <OTPInputs
+              email={email}
+              expirationTime={expirationTime}
+              handleResendVerificationEmail={handleResendVerificationEmail}
+            />
 
             <Button
               label="Didn't receive the email yet?"

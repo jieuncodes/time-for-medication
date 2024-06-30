@@ -203,6 +203,7 @@ router.post(
     sendSuccessResponse(res, {
       message: "OTP generated and saved successfully",
       otp: newOtp.otp,
+      expirationTime: newOtp.expirationTime,
     });
   })
 );

@@ -9,8 +9,9 @@ export const sendVerificationEmail = async ({ email }: { email: string }) => {
     });
 
     const data = await response.json();
+
     if (response.ok) {
-      return { success: true };
+      return { success: true, expirationTime: new Date(data.expirationTime) };
     } else {
       return { success: false, error: data.error };
     }
@@ -44,7 +45,7 @@ export const compareUserOTP = async ({
 
     const data = await response.json();
     if (response.ok) {
-      return { success: true };
+      return { success: true, expirationTime: new Date(data.expirationTime) };
     } else {
       return { success: false, error: data.message };
     }

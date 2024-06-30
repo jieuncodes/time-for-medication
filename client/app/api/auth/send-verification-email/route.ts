@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-const generateOtp = async (email: string): Promise<string> => {
+const generateOtp = async (
+  email: string
+): Promise<{
+  otp: string;
+  expirationTime: string;
+}> => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 3000);
 
@@ -24,8 +29,9 @@ const generateOtp = async (email: string): Promise<string> => {
     throw new Error(res.error || 'Failed to generate OTP');
   }
 
-  return res.data.otp;
+  return { otp: res.data.otp, expirationTime: res.data.expirationTime };
 };
+
 const createTransporter = () => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -70,7 +76,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const otp = await generateOtp(email);
+      const { otp, expirationTime } = await generateOtp(email);
 
       await sendEmail(
         email,
@@ -79,7 +85,8 @@ export async function POST(req: NextRequest) {
       );
 
       return NextResponse.json(
-        { message: 'Email sent successfully' },
+        { message: 'Email sent successfully', expirationTime },
+
         { status: 200 }
       );
     } catch (error) {
