@@ -35,7 +35,7 @@ const FormInput = <T extends FieldValues>({
       render={({ field }) => (
         <FormItem className={moreStyles}>
           <FormControl>
-            <>
+            <InputWrapper>
               {label && <Label htmlFor={name}>{label}</Label>}
               <StyledInput
                 placeholder={placeholder}
@@ -43,7 +43,7 @@ const FormInput = <T extends FieldValues>({
                 type={type}
                 disabled={disabled}
               />
-            </>
+            </InputWrapper>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -54,12 +54,16 @@ const FormInput = <T extends FieldValues>({
 
 export default FormInput;
 
+const InputWrapper = tw.div`
+  w-full
+  px-1
+`;
 const StyledInput = tw(Input)`
   text-md
   user-select-none
   h-12
   select-none
-  rounded-xl
+  rounded-md
   border
   border-gray-300
   pl-4
