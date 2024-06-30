@@ -22,10 +22,6 @@ export const FunnelTitle = tw.h1`
   text-black
 `;
 
-export const CenteredFunnelTitle = tw(FunnelTitle)`
-  text-center
-`;
-
 export const FunnelDesc = tw.p`
   mb-10
   text-gray-500

@@ -30,6 +30,7 @@ const CircleBtn = tw.div`
   border-gary-200
   absolute
   top-4
+  z-50
   flex
   h-10
   w-10
