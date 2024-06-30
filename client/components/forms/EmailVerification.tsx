@@ -36,8 +36,8 @@ const EmailVerification = ({ email }: { email: string }) => {
 
   return (
     <FunnelWrapper>
-      <LottieWrapper>
-        <Lottie animationData={emailSend} loop={false} />
+      <LottieWrapper className="relative -top-14 -mb-14 ">
+        <Lottie animationData={emailSend} />
       </LottieWrapper>
       <FunnelTitle>Verification code</FunnelTitle>
       <FunnelDesc>{`Enter the verification code sent to ${email}`}</FunnelDesc>

@@ -6,11 +6,12 @@ export const FunnelWrapper = tw.div`
   flex-col
   items-center
   justify-center
-  bg-red-50
+  align-middle
 `;
 export const FunnelTitle = tw.h1`
   mb-4
   w-full
+  text-center
   text-2xl
   font-bold
   text-black
