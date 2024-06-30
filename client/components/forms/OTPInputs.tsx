@@ -19,7 +19,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { useFunnel } from '@/providers/FunnelProvider';
 import { useEffect, useState } from 'react';
-import LoadingSpinner from '../icons/LoadingSpinner';
 import { compareUserOTP } from '../../app/services/emailServices';
 
 const FormSchema = z.object({
@@ -28,7 +27,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function InputOTPForm({ email }: { email: string }) {
+export function OTPInputs({ email }: { email: string }) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,11 +46,14 @@ export function InputOTPForm({ email }: { email: string }) {
       email,
       otp: data.pin,
     });
+    console.log('otpComparisonResult', otpComparisonResult);
 
     if (otpComparisonResult.success) {
       toNext();
     } else {
-      form.setError('pin', { message: 'Wrong code. Please try again.' });
+      form.setError('pin', {
+        message: otpComparisonResult.error || 'Wrong code. Please try again.',
+      });
       setLoading(false);
     }
   };
@@ -94,11 +96,9 @@ export function InputOTPForm({ email }: { email: string }) {
           type="submit"
           size={'full'}
           disabled={loading}
-          className="mt-10"
-        >
-          {loading && <LoadingSpinner />}
-          Verify
-        </Button>
+          loading={loading}
+          label="Verify"
+        />
       </form>
     </Form>
   );

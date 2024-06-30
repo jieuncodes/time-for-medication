@@ -83,10 +83,12 @@ const EmailForm = ({
             placeholder="your-email@google.com"
             moreStyles="mt-10 mb-8"
           />
-          <Button type="submit" size={'full'} disabled={loading}>
-            {loading && <LoadingSpinner />}
-            Verify
-          </Button>
+          <Button
+            label="Verify"
+            type="submit"
+            size={'full'}
+            disabled={loading}
+          />
         </form>
       </Form>
     </SingleContent>

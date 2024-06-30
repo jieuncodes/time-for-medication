@@ -209,21 +209,28 @@ router.post(
 router.post(
   "/verify-otp",
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { email, otp } = req.body;
-    if (!email || !otp) {
+    const { email, otp: userTypedOTP } = req.body;
+
+    if (!email || !userTypedOTP) {
       return sendErrorResponse(res, 400, "Email and OTP are required");
     }
 
-    const existingOtp = await otpRepository.findOneBy({ email, otp });
-    console.log("existingOtp", existingOtp);
+    const matchingEmail = await otpRepository.findOneBy({
+      email,
+    });
 
-    if (!existingOtp) {
-      return sendErrorResponse(res, 404, "No OTP found for this email");
-    }
-    if (otp !== existingOtp.otp) {
-      return sendErrorResponse(res, 400, "Invalid OTP");
+    if (!matchingEmail) {
+      return sendErrorResponse(res, 400, "Email not found");
     }
 
+    const isOTPmatch = await otpRepository.findOneBy({
+      email,
+      otp: userTypedOTP,
+    });
+
+    if (!isOTPmatch) {
+      return sendErrorResponse(res, 400, "Wrong OTP. Please try again");
+    }
     sendSuccessResponse(res, "OTP is valid");
   })
 );

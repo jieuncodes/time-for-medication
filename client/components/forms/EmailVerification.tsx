@@ -7,10 +7,9 @@ import {
   FunnelTitle,
 } from '@/styles/funnel.styles';
 import { ButtonsBox, LottieWrapper } from '../common';
-import { InputOTPForm } from './InputOTP';
+import { OTPInputs } from './OTPInputs';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import LoadingSpinner from '../icons/LoadingSpinner';
 import { useFunnel } from '@/providers/FunnelProvider';
 import { sendVerificationEmail } from '../../app/services/emailServices';
 
@@ -48,8 +47,15 @@ const EmailVerification = ({ email }: { email: string }) => {
     setLoading(true);
     setIsSending(true);
     setMessage(null);
-    await sendVerificationEmail({ email });
-    setLoading(false);
+
+    try {
+      const result = await sendVerificationEmail({ email });
+      handleEmailSendResult(result);
+    } catch (error) {
+      setMessage('An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,34 +78,36 @@ const EmailVerification = ({ email }: { email: string }) => {
           <FunnelError>{message}</FunnelError>
 
           <ButtonsBox>
-            <Button onClick={() => toPrev()} size={'full'} variant="outline">
-              {loading && <LoadingSpinner />}
-              Try other email
-            </Button>
             <Button
+              label="Try other email"
+              onClick={() => toPrev()}
+              loading={loading}
+              size={'full'}
+              variant="outline"
+            />
+            <Button
+              label="Resend"
+              loading={loading}
               onClick={handleResendVerificationEmail}
               size={'full'}
               disabled={loading}
-            >
-              {loading && <LoadingSpinner />}
-              Resend
-            </Button>
+            />
           </ButtonsBox>
         </>
       ) : (
         !isSending && (
           <>
             <FunnelTitle>Verification code</FunnelTitle>
-
             <FunnelDesc>{`Enter the verification code sent to ${email}`}</FunnelDesc>
-            <InputOTPForm />
+
+            <OTPInputs email={email} />
+
             <Button
+              label="Didn't receive the email yet?"
               onClick={handleResendVerificationEmail}
               variant={'link'}
               className="mt-6"
-            >
-              Didn't receive the email yet?
-            </Button>
+            />
           </>
         )
       )}
