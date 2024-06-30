@@ -17,12 +17,12 @@ import {
 import { authenticateToken } from "../middlewares/authenticateToken.ts";
 import config from "../config.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
-import crypto from 'crypto';
+import crypto from "crypto";
 import { Otp } from "../models/Otp.ts";
 
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);
-const otpRepository = AppDataSource.getRepository(Otp); 
+const otpRepository = AppDataSource.getRepository(Otp);
 
 // Utility to sign JWT
 const signToken = (userId: number): string => {
@@ -198,7 +198,33 @@ router.post(
     });
     await otpRepository.save(newOtp);
 
-    sendSuccessResponse(res, { message: 'OTP generated and saved successfully', otp: newOtp.otp });
+    sendSuccessResponse(res, {
+      message: "OTP generated and saved successfully",
+      otp: newOtp.otp,
+    });
+  })
+);
+
+// POST: Verify user typed OTP with the stored OTP
+router.post(
+  "/verify-otp",
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return sendErrorResponse(res, 400, "Email and OTP are required");
+    }
+
+    const existingOtp = await otpRepository.findOneBy({ email, otp });
+    console.log("existingOtp", existingOtp);
+
+    if (!existingOtp) {
+      return sendErrorResponse(res, 404, "No OTP found for this email");
+    }
+    if (otp !== existingOtp.otp) {
+      return sendErrorResponse(res, 400, "Invalid OTP");
+    }
+
+    sendSuccessResponse(res, "OTP is valid");
   })
 );
 
