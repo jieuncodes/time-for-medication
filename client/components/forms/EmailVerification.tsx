@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import LoadingSpinner from '../icons/LoadingSpinner';
 import { useFunnel } from '@/providers/FunnelProvider';
+import { sendVerificationEmail } from '../../app/services/emailServices';
 
 const EmailVerification = ({ email }: { email: string }) => {
   const [message, setMessage] = useState<string | null>(null);
@@ -20,38 +21,34 @@ const EmailVerification = ({ email }: { email: string }) => {
 
   const { toPrev } = useFunnel();
 
-  const sendVerificationEmail = async () => {
-    try {
-      const response = await fetch('/api/auth/send-verification-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+  useEffect(() => {
+    const initiateEmailSend = async () => {
+      const result = await sendVerificationEmail({ email });
+      handleEmailSendResult(result);
+    };
 
-      const data = await response.json();
-      if (response.ok) {
-        setIsSending(false);
-      } else {
-        setIsSending(false);
-        setMessage(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      setMessage('An unexpected error occurred.');
+    initiateEmailSend();
+  }, [email]);
+
+  const handleEmailSendResult = (result: {
+    success: boolean;
+    error?: string;
+  }) => {
+    if (result.success) {
       setIsSending(false);
+    } else {
+      setIsSending(false);
+      setMessage(`Error: ${result.error}`);
     }
   };
 
-  useEffect(() => {
-    sendVerificationEmail();
-  }, []);
+  const handleResendVerificationEmail = async () => {
+    if (!email) return;
 
-  const resendVerificationEmail = async () => {
     setLoading(true);
     setIsSending(true);
     setMessage(null);
-    await sendVerificationEmail();
+    await sendVerificationEmail({ email });
     setLoading(false);
   };
 
@@ -80,7 +77,7 @@ const EmailVerification = ({ email }: { email: string }) => {
               Try other email
             </Button>
             <Button
-              onClick={resendVerificationEmail}
+              onClick={handleResendVerificationEmail}
               size={'full'}
               disabled={loading}
             >
@@ -97,7 +94,7 @@ const EmailVerification = ({ email }: { email: string }) => {
             <FunnelDesc>{`Enter the verification code sent to ${email}`}</FunnelDesc>
             <InputOTPForm />
             <Button
-              onClick={resendVerificationEmail}
+              onClick={handleResendVerificationEmail}
               variant={'link'}
               className="mt-6"
             >
