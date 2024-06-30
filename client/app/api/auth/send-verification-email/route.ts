@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 const generateOtp = async (email: string): Promise<string> => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3000);
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/generate-otp`,
     {
@@ -10,8 +13,11 @@ const generateOtp = async (email: string): Promise<string> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email }),
+      signal: controller.signal,
     }
   );
+
+  clearTimeout(timeout);
 
   const res = await response.json();
   if (!response.ok || !res.data.otp) {
@@ -42,7 +48,7 @@ const sendEmail = async (
   const transporter = createTransporter();
 
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.ADMIN_EMAIL,
       to: email,
       subject: subject,
@@ -78,6 +84,7 @@ export async function POST(req: NextRequest) {
       );
     } catch (error) {
       console.error('Error sending email:', error);
+
       return NextResponse.json(
         { error: 'Failed to send email', details: error },
         { status: 500 }
