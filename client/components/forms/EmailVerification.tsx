@@ -21,15 +21,6 @@ const EmailVerification = ({ email }: { email: string }) => {
 
   const { toPrev } = useFunnel();
 
-  useEffect(() => {
-    const initiateEmailSend = async () => {
-      const result = await sendVerificationEmail({ email });
-      handleEmailSendResult(result);
-    };
-
-    initiateEmailSend();
-  }, [email]);
-
   const handleEmailSendResult = (result: {
     success: boolean;
     error?: string;
@@ -41,6 +32,15 @@ const EmailVerification = ({ email }: { email: string }) => {
       setMessage(`Error: ${result.error}`);
     }
   };
+
+  useEffect(() => {
+    const initiateEmailSend = async () => {
+      const result = await sendVerificationEmail({ email });
+      handleEmailSendResult(result);
+    };
+
+    initiateEmailSend();
+  }, [email]);
 
   const handleResendVerificationEmail = async () => {
     if (!email) return;

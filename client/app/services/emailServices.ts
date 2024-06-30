@@ -9,15 +9,12 @@ export const sendVerificationEmail = async ({ email }: { email: string }) => {
     });
 
     const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to generate OTP');
+    if (response.ok) {
+      return { success: true };
+    } else {
+      return { success: false, error: data.error };
     }
-    return {
-      success: true,
-    };
   } catch (error) {
-    console.error('Error sending email: ', error);
-    throw error;
+    return { success: false, error: 'An unexpected error occurred.' };
   }
 };
