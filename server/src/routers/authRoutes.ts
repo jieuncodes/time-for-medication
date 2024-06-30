@@ -17,9 +17,12 @@ import {
 import { authenticateToken } from "../middlewares/authenticateToken.ts";
 import config from "../config.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
+import crypto from 'crypto';
+import { Otp } from "../models/Otp.ts";
 
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);
+const otpRepository = AppDataSource.getRepository(Otp); 
 
 // Utility to sign JWT
 const signToken = (userId: number): string => {
@@ -175,6 +178,27 @@ router.post(
     }
 
     sendErrorResponse(res, 400, "Input is required");
+  })
+);
+
+// POST: Generate and store OTP
+router.post(
+  "/generate-otp",
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email } = req.body;
+    if (!email) {
+      return sendErrorResponse(res, 400, "Email is required");
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    const newOtp = otpRepository.create({
+      email,
+      otp,
+    });
+    await otpRepository.save(newOtp);
+
+    sendSuccessResponse(res, { message: 'OTP generated and saved successfully', otp: newOtp.otp });
   })
 );
 

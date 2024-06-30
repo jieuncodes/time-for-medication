@@ -28,7 +28,7 @@ export default function RootLayout({
                   {children}
                   <Toaster
                     richColors
-                    className="absolute z-0 "
+                    className="absolute z-0"
                     position="bottom-center"
                     expand={true}
                     visibleToasts={2}
