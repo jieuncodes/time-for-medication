@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import {
@@ -46,7 +46,6 @@ export function OTPInputs({ email }: { email: string }) {
       email,
       otp: data.pin,
     });
-    console.log('otpComparisonResult', otpComparisonResult);
 
     if (otpComparisonResult.success) {
       toNext();
@@ -59,6 +58,8 @@ export function OTPInputs({ email }: { email: string }) {
   };
 
   useEffect(() => {
+    form.setFocus('pin');
+
     const subscription = form.watch((value) => {
       if (value?.pin?.length === 6) {
         onSubmit({ pin: value.pin });
